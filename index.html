@@ -49,7 +49,7 @@
     position: sticky; top: 0; z-index: 30;
     background: linear-gradient(180deg, rgba(15,17,22,.98), rgba(15,17,22,.92) 70%, rgba(15,17,22,0));
     backdrop-filter: blur(8px);
-    padding: 14px;
+    padding: 10px;
     border-bottom: 1px solid rgba(255,255,255,.04);
   }
   .profile{
@@ -112,10 +112,7 @@
   @media (max-width:520px){
     .grid{ grid-template-columns: 1fr 1fr; gap:12px; padding:12px }
   }
-  @media (max-width:380px){
-    /* на очень маленьких экранах сделали по одной колонке */
-    .grid{ grid-template-columns: 1fr; }
-  }
+ 
 
   .card{
     position:relative; overflow:hidden; border-radius:20px;
