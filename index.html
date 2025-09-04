@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>Turbo Gifts</title>
+<title>Turbo Gifts — modal full-screen</title>
 
 <!-- Telegram Web Apps SDK -->
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -20,10 +20,10 @@
     --bg-soft:#151822;
     --card-bg:#1a1e2a;
     --text:#e7ecf3;
-    --muted:#9aa3b2;
-    --accent-blue-start:#43c2ff;
+    --muted:#c8cdd6;
+    --accent-blue-start:#3abefc;
     --accent-blue-end:#6aa8ff;
-    --gold:#ffcd38;
+    --gold:#FFD14B;
     --radius:18px;
     --card-footer-h:56px; /* высота блока с ценой */
     --tab-size:46px; /* размер нижней вкладки */
@@ -55,35 +55,34 @@
     position: sticky;
     top:0;
     z-index:40;
-    padding: 5px 10px;
+    padding: 6px 12px;
     background: linear-gradient(180deg, rgba(15,17,22,.98), rgba(15,17,22,.92) 70%, rgba(15,17,22,0));
     border-bottom: 1px solid rgba(255,255,255,.04);
     backdrop-filter: blur(6px);
   }
-  .profile{ display:flex; align-items:center; gap:4px; }
+  .profile{ display:flex; align-items:center; gap:8px; }
   .avatar{
-    width:36px; height:36px; border-radius:50%;
+    width:40px; height:40px; border-radius:50%;
     background:#222; background-position:center; background-size:cover;
     border:2px solid #303544; flex-shrink:0;
-    margin: 5px
   }
-  .name{ font-weight:600; font-size:17px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .name{ font-weight:700; font-size:17px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 
   /* --- Banner (уменьшенный) --- */
   .banner{
     margin:12px 14px;
-    padding: 13px 12px; /* уменьшили высоту */
+    padding: 10px 12px;
     border-radius: 14px;
     background: linear-gradient(90deg, var(--accent-blue-start), var(--accent-blue-end));
     display:flex; align-items:center; justify-content:space-between;
     box-shadow: var(--shadow);
   }
-  .banner .title{ font-weight:700; font-size:16px; margin:0px 5px }
+  .banner .title{ font-weight:800; font-size:15px }
   .banner .btn{
     background: #fff;
     color: #09b5ff;
     font-weight:700;
-    padding:6px 10px; /* компактнее */
+    padding:6px 10px;
     border-radius:12px;
     text-decoration:none;
     font-size:13px;
@@ -117,7 +116,6 @@
     justify-items:center;
     align-items:start;
   }
-  /* не делаем single-column: ты просил всегда 2 */
 
   /* --- Card --- */
   .card{
@@ -128,25 +126,31 @@
     border:1px solid #262c41;
     width:100%;
     max-width: 260px;
-    height: 280px; /* немного выше, чтобы footer/cena помещались */
+    height: 260px; /* baseline */
     display:flex;
     flex-direction:column;
     justify-content:flex-end;
     box-shadow: var(--shadow);
+    transition: transform .12s ease;
+    cursor:pointer;
   }
+  /* На телефонах — карточки ниже (фиксированная высота) */
+  @media (max-width:420px){
+    .card{ height: 200px; }
+  }
+  .card:active{ transform: translateY(1px); }
 
-  /* Media area (анимация) — даём отступ внизу равный высоте footer,
-     чтобы анимация не заходила под цену */
+  /* Media area (анимация) */
   .card .media{
     position: absolute;
     left:0; right:0; top:0;
     height: calc(100% - var(--card-footer-h));
     display:flex; align-items:center; justify-content:center;
-    padding: 16px;
+    padding: 14px;
   }
   .media canvas, .media svg, .media img, .media div{ max-width:100%; max-height:100%; }
 
-  /* Footer / price — внизу карточки, отдельная панель, не перекрывает медиа */
+  /* Footer / price — ЖЁЛТАЯ ПЛАШКА как на фото */
   .card .footer{
     height: var(--card-footer-h);
     display:flex; align-items:center; justify-content:center;
@@ -156,23 +160,15 @@
     border-top: 1px solid rgba(255,255,255,.03);
     backdrop-filter: blur(4px);
   }
-  .price {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 15px;
-  font-weight: 700;
-  margin-bottom: 8px;
-  color: #FFD700;
-}
-
-.price-icon {
-  width: 16px;      /* размер иконки как символ */
-  height: 16px;
-  margin-right: 4px;
-  object-fit: contain;
-}
-
+  /* делаем цену в закрашенном жёлтом полупрозрачном прямоугольнике */
+  .card .footer .price {
+    display:inline-flex; align-items:center; gap:8px;
+    background: linear-gradient(180deg, rgba(255,209,75,0.95), rgba(255,195,45,0.95));
+    padding:8px 12px; border-radius:12px;
+    color:#1f1f1f; font-weight:800; font-size:15px;
+    box-shadow: 0 6px 16px rgba(0,0,0,.22);
+  }
+  .price-icon { width:16px; height:16px; object-fit:contain; border-radius:3px; }
 
   /* Ribbon */
   .ribbon{
@@ -209,10 +205,100 @@
   .tab img{ width:20px; height:20px; object-fit:contain; pointer-events:none; display:block }
   .tab.active{ outline:2px solid #3f69ff55; transform: translateY(-2px); }
 
-  /* Helpers */
-  .hidden-fallback{ opacity:0; transform: scale(.98); pointer-events:none }
-  .lottie-placeholder{ color:var(--muted); font-size:12px; text-align:center; padding:8px }
-  .visually-hidden{ position:absolute; left:-9999px; top:auto; width:1px; height:1px; overflow:hidden; }
+  /* --- FULLSCREEN MODAL (overlay covers all) --- */
+  .overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 2000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background: rgba(6,8,10,0.85);
+    backdrop-filter: blur(6px);
+  }
+  .overlay.open { display:flex; }
+
+  /* central modal card — максимально похож на фото: светлый центр, крупная анимация, price pill, buttons */
+  .modal-card {
+    width: min(760px, 96%);
+    max-width: 920px;
+    height: min(860px, 94vh);
+    background: linear-gradient(180deg,#0f1116,#0b0d10);
+    border-radius: 20px;
+    box-shadow: 0 30px 90px rgba(0,0,0,.7);
+    display:flex;
+    flex-direction:column;
+    overflow:hidden;
+  }
+
+  /* top area (close icon at top-right) */
+  .modal-top {
+    display:flex; align-items:center; justify-content:space-between;
+    padding: 16px 18px;
+    border-bottom:1px solid rgba(255,255,255,0.03);
+  }
+  .modal-title { font-weight:800; font-size:20px; }
+  .modal-close { background:transparent; border:0; color:var(--muted); font-weight:700; cursor:pointer; font-size:16px; }
+
+  /* media area: big center */
+  .modal-body {
+    flex:1; display:flex; align-items:center; justify-content:center; padding: 18px;
+  }
+  .modal-media-wrap {
+    width: min(720px, 88%);
+    max-width: 860px;
+    height: min(520px, 62vh);
+    border-radius: 14px;
+    background: linear-gradient(180deg, rgba(20,22,28,0.45), rgba(8,9,12,0.35));
+    display:flex; align-items:center; justify-content:center;
+    border:1px solid rgba(255,255,255,0.03);
+    box-shadow: 0 20px 60px rgba(0,0,0,.6);
+    position:relative;
+  }
+  .modal-media { width:100%; height:100%; display:flex; align-items:center; justify-content:center; padding:8px; }
+
+  /* bottom area: price pill left, buttons bottom */
+  .modal-bottom {
+    padding: 16px 18px; border-top:1px solid rgba(255,255,255,0.03); display:flex; flex-direction:column; gap:12px;
+  }
+  .modal-bottom .price-row { display:flex; align-items:center; gap:12px; }
+  .price-pill {
+    display:inline-flex; align-items:center; gap:10px;
+    background: linear-gradient(180deg, rgba(255,209,75,0.98), rgba(255,195,45,0.98));
+    color:#111; padding:10px 14px; border-radius:12px; font-weight:900; font-size:16px; box-shadow: 0 8px 20px rgba(0,0,0,.35);
+  }
+
+  .modal-actions { display:flex; gap:12px; flex-direction:column; }
+  .btn-ghost {
+    background: rgba(255,255,255,0.06); color:#fff; padding:14px; border-radius:12px; text-align:center; border:1px solid rgba(255,255,255,0.03); font-weight:800; text-decoration:none;
+  }
+  .btn-primary {
+    background: linear-gradient(90deg,#2fa6ff,#1a73ff); color:#fff; padding:16px; border-radius:12px; text-align:center; font-weight:900; text-decoration:none;
+  }
+
+  /* Purchase success — full-screen modal with big blue close button bottom full width */
+  .purchase-overlay { position: fixed; inset:0; z-index:3000; display:none; align-items:center; justify-content:center; background: rgba(4,6,8,0.8); }
+  .purchase-overlay.open { display:flex; }
+  .purchase-card {
+    width: min(720px, 94%); max-width:900px; height: min(720px, 92vh);
+    background: linear-gradient(180deg,#0b0d11,#0e1114); border-radius:16px; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:20px; position:relative;
+  }
+  .purchase-media { width:80%; height:60%; display:flex; align-items:center; justify-content:center; }
+  .purchase-close {
+    position:absolute; bottom:18px; left:50%; transform:translateX(-50%); width: calc(100% - 40px); max-width: 720px;
+    background: #2fa6ff; color:#fff; padding:14px; border-radius:12px; font-weight:900; text-align:center; cursor:pointer;
+  }
+
+  /* small screens adjustments */
+  @media (max-width:600px){
+    .modal-card { width:95%; height:100vh; border-radius:0; }
+    .modal-media-wrap { height: 56vh; width:92%; }
+    .purchase-card { width:94%; height:100vh; border-radius:0; }
+  }
+
+  /* helpers */
+  .hidden { display:none !important; }
+  .lottie-placeholder{ color:var(--muted); font-size:13px; text-align:center; padding:8px }
 </style>
 </head>
 <body>
@@ -221,14 +307,13 @@
     <div class="topbar">
       <div class="profile">
         <div id="avatar" class="avatar" aria-hidden="true"></div>
-        <div id="userName" class="name">Volodymyr</div>
+        <div id="userName" class="name">User</div>
       </div>
     </div>
 
-    <!-- Banner (уменьшенный) -->
+    <!-- Banner -->
     <div class="banner" role="region" aria-label="banner">
       <div class="title">Turbo Gifts here!</div>
-      <!-- Замените href на вашу ссылку -->
       <a id="bannerBtn" class="btn" href="https://example.com" target="_blank" rel="noopener noreferrer">Open Gifts</a>
     </div>
 
@@ -241,36 +326,37 @@
     <!-- Grid: ровно 2 подарка -->
     <div class="grid" id="cardsGrid" aria-live="polite">
       <!-- Карточка 1: В НАЛИЧИИ (голубая ленточка "1 из 1000") -->
-      <article class="card" id="card1" data-sold="false" role="article" aria-label="Подарок 1">
+      <!-- Добавил data-invoice-url: поставь свою ссылку на оплату сюда -->
+      <article class="card" id="card1" data-sold="false" data-invoice-url="#" role="article" aria-label="Подарок 1">
         <div class="ribbon stock" aria-hidden="true">1 из 1000</div>
         <div class="media lottie" data-lottie-url="https://raw.githubusercontent.com/vovashmyhol/shop/refs/heads/main/002_DOG%20(1).json">
           <div class="lottie-placeholder">Lottie animation 1 — вставьте ссылку в data-lottie-url</div>
         </div>
         <div class="footer">
           <div class="price">
-  <img src="stars-DBKMczxe.png" alt="icon" class="price-icon">
-  <span class="price-value">15</span>
-</div>
-
+            <img src="stars-DBKMczxe.png" alt="icon" class="price-icon">
+            <span class="price-value">15</span>
+          </div>
         </div>
       </article>
 
       <!-- Карточка 2: Продана -->
-      <article class="card" id="card2" data-sold="true" role="article" aria-label="Подарок 2 (продан)">
+      <article class="card" id="card2" data-sold="true" data-invoice-url="#" role="article" aria-label="Подарок 2 (продан)">
         <div class="ribbon sold" aria-hidden="true">Продано</div>
         <div class="media lottie" data-lottie-url="https://raw.githubusercontent.com/vovashmyhol/shop/refs/heads/main/002_DOG%20(1).json">
           <div class="lottie-placeholder">Lottie animation 2 — вставьте ссылку в data-lottie-url</div>
         </div>
         <div class="footer">
           <div class="price">
-  <img src="stars-DBKMczxe.png" alt="icon" class="price-icon">
-  <span class="price-value">15</span>
-</div>
+            <img src="stars-DBKMczxe.png" alt="icon" class="price-icon">
+            <span class="price-value">15</span>
+          </div>
+        </div>
       </article>
     </div>
   </div>
 
-  <!-- Tabbar — заменяйте src у img на свои PNG -->
+  <!-- Tabbar -->
   <nav class="tabbar" role="navigation" aria-label="Основная навигация">
     <div class="tabs" role="tablist">
       <div class="tab active" role="tab" aria-selected="true" id="tab1" title="Tab 1">
@@ -285,14 +371,61 @@
     </div>
   </nav>
 
-<script>
-/* ===========================================================
-   Полный код: Telegram WebApp init, Lottie/rlottie загрузчики,
-   плавное скрытие/показ распроданных через GSAP, таббар,
-   resize handler и подсказки — всё сохранил и доработал.
-   =========================================================== */
+  <!-- ========= FULLSCREEN ITEM MODAL (копия по фото) ========= -->
+  <div id="itemOverlay" class="overlay" aria-hidden="true" role="dialog" aria-modal="true">
+    <div class="modal-card" role="document" aria-label="Детали подарка">
+      <div class="modal-top">
+        <div class="modal-title" id="modalTitle">Подарок</div>
+        <button id="modalCloseBtn" class="modal-close" aria-label="Закрыть модалку">✕</button>
+      </div>
 
-/* ---------- Telegram Web App: имя и аватар ---------- */
+      <div class="modal-body">
+        <div class="modal-media-wrap">
+          <div id="modalLottie" class="modal-media">
+            <!-- Lottie вставится сюда -->
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-bottom">
+        <div class="price-row">
+          <div class="price-pill" id="modalPricePill">
+            <img src="stars-DBKMczxe.png" alt="icon" style="width:18px;height:18px;object-fit:contain">
+            <div id="modalPriceValue">15</div>
+          </div>
+          <div style="color:#9aa3b2;font-weight:600;margin-left:8px" id="modalShort">Краткое описание</div>
+        </div>
+
+        <div class="modal-actions">
+          <a id="modalBuyStars" class="btn-ghost" href="#" target="_blank" rel="noopener noreferrer">Купить звёзды ★</a>
+          <a id="modalBuyGift" class="btn-primary" href="#" target="_blank" rel="noopener noreferrer">Купить подарок — ★ <span id="modalBuyPrice">15</span></a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========= PURCHASE SUCCESS FULLSCREEN (после оплаты) ========= -->
+  <div id="purchaseOverlay" class="purchase-overlay" aria-hidden="true" role="dialog" aria-modal="true">
+    <div class="purchase-card" role="document" aria-label="Куплено">
+      <div id="purchasedMedia" class="purchase-media">
+        <!-- купленный Lottie здесь -->
+      </div>
+      <div id="purchaseCloseBtn" class="purchase-close" role="button" tabindex="0">Закрыть</div>
+    </div>
+  </div>
+
+<script>
+/* ============================
+  СКОРЫЙ ОБЗОР:
+  - Сохранён твой базовый код (Telegram init, lottie, rlottie, gsap hide/show)
+  - Добавлены: full-screen modal (itemOverlay), purchaseOverlay
+  - Клик по карточке открывает itemOverlay с соответствующей Lottie и ценой
+  - modalBuyStars ведёт на banner href (по умолчанию) — можно изменить
+  - modalBuyGift открывает data-invoice-url карточки (если вставишь) — после оплаты вызови window.handlePaymentSuccess()
+  - window.handlePaymentSuccess() откроет purchaseOverlay с купленным Lottie и большим голубым "Закрыть"
+  ============================ */
+
+/* ---------- Telegram WebApp: имя и аватар (как у тебя) ---------- */
 (function initTelegramUser(){
   try {
     if(window.Telegram && Telegram.WebApp){
@@ -327,17 +460,16 @@
   }
 })();
 
-/* ---------- Lottie / rlottie загрузка ---------- */
+/* ---------- Lottie / rlottie загрузка (везде) ---------- */
 function loadLottieFor(el){
   const url = el.getAttribute('data-lottie-url');
+  el.innerHTML = '';
   if(!url){
-    // ничего не задано — оставляем плейсхолдер
+    el.innerHTML = '<div class="lottie-placeholder">Укажите raw ссылку на Lottie (.json или .tgs)</div>';
     return;
   }
-  // очистим содержимое контейнера
-  el.innerHTML = '';
 
-  // Если JSON (lottie-web)
+  // JSON -> lottie-web
   if(/\.json(\?|$)/i.test(url) && window.lottie){
     try {
       lottie.loadAnimation({
@@ -353,7 +485,7 @@ function loadLottieFor(el){
     }
   }
 
-  // Если .tgs (rlottie)
+  // .tgs -> rlottie
   if(/\.tgs(\?|$)/i.test(url) && window.rlottie){
     try {
       const player = new rlottie.Player({
@@ -370,132 +502,176 @@ function loadLottieFor(el){
     }
   }
 
-  // fallback: если это картинка
+  // fallback: image
   if(/\.(svg|png|jpg|jpeg|gif)(\?|$)/i.test(url)){
     const img = document.createElement('img');
-    img.src = url;
-    img.alt = 'media';
-    img.style.maxWidth = '100%';
-    img.style.maxHeight = '100%';
-    el.appendChild(img);
-    return;
+    img.src = url; img.alt = 'media';
+    img.style.maxWidth = '100%'; img.style.maxHeight = '100%';
+    el.appendChild(img); return;
   }
 
-  el.innerHTML = '<div class="lottie-placeholder">Укажите raw ссылку на Lottie (.json или .tgs)</div>';
+  el.innerHTML = '<div class="lottie-placeholder">Неподдерживаемый формат</div>';
 }
 
+/* Загрузим все карточные Lottie (фулл) */
 document.querySelectorAll('.media.lottie').forEach(loadLottieFor);
 
-/* ---------- Плавное скрытие/показ "проданных" карточек с GSAP ---------- */
+/* ---------- GSAP: скрыть/показ распроданных ---------- */
 const hideSoldCheckbox = document.getElementById('hideSold');
 const soldSelector = '[data-sold="true"]';
 const soldCards = () => Array.from(document.querySelectorAll(soldSelector));
-
-// подготовка карточек (willChange)
 soldCards().forEach(c => { c.style.willChange = 'opacity, transform'; c.dataset._hidden = '0'; });
 
-// скрыть с анимацией
 function hideSoldAnimated(){
   const cards = soldCards();
-  cards.forEach(c => {
+  cards.forEach(c=>{
     if(c.dataset._hidden === '1') return;
-    gsap.to(c, {
-      duration: 0.36,
-      ease: 'power2.out',
-      opacity: 0,
-      scale: 0.98,
-      y: -8,
-      onComplete: () => {
-        c.style.display = 'none';
-        c.dataset._hidden = '1';
-      }
-    });
+    gsap.to(c, { duration:0.36, ease:'power2.out', opacity:0, scale:0.98, y:-8, onComplete:()=>{ c.style.display='none'; c.dataset._hidden='1'; } });
   });
 }
-
-// показать с анимацией
 function showSoldAnimated(){
   const cards = document.querySelectorAll(soldSelector);
-  cards.forEach(c => {
+  cards.forEach(c=>{
     if(c.dataset._hidden !== '1') return;
-    c.style.display = ''; // возвращаем рендер
-    gsap.set(c, {opacity:0, scale:0.98, y:-8});
-    gsap.to(c, {
-      duration: 0.4,
-      ease: 'power2.out',
-      opacity: 1,
-      scale: 1,
-      y: 0,
-      onComplete: ()=> { c.dataset._hidden = '0'; }
-    });
+    c.style.display = ''; gsap.set(c,{opacity:0, scale:0.98, y:-8});
+    gsap.to(c,{ duration:0.4, ease:'power2.out', opacity:1, scale:1, y:0, onComplete:()=>{ c.dataset._hidden='0'; } });
   });
 }
-
 hideSoldCheckbox.addEventListener('change', ()=>{
-  if(typeof gsap === 'undefined'){
-    // фоллбек если GSAP не доступен
-    const cards = soldCards();
-    cards.forEach(c => { c.style.display = hideSoldCheckbox.checked ? 'none' : ''; });
-    return;
-  }
-  if(hideSoldCheckbox.checked) hideSoldAnimated();
-  else showSoldAnimated();
+  if(typeof gsap === 'undefined'){ soldCards().forEach(c => { c.style.display = hideSoldCheckbox.checked ? 'none' : ''; }); return; }
+  if(hideSoldCheckbox.checked) hideSoldAnimated(); else showSoldAnimated();
 });
-
-// init state on load
 window.addEventListener('load', ()=>{
-  if(hideSoldCheckbox.checked) {
-    // если отмечен, скрываем
-    setTimeout(hideSoldAnimated, 120);
-  } else {
-    // показываем все
-    document.querySelectorAll(soldSelector).forEach(c => {
-      c.dataset._hidden = '0'; c.style.display = ''; c.style.opacity = 1; c.style.transform = 'none';
-    });
-  }
+  if(hideSoldCheckbox.checked) setTimeout(hideSoldAnimated,120); else document.querySelectorAll(soldSelector).forEach(c=>{ c.dataset._hidden='0'; c.style.display=''; c.style.opacity=1; c.style.transform='none'; });
 });
 
-/* ---------- Таббар клики (простая логика выделения) ---------- */
+/* ---------- MODAL LOGIC ---------- */
+const itemOverlay = document.getElementById('itemOverlay');
+const modalCloseBtn = document.getElementById('modalCloseBtn');
+const modalTitle = document.getElementById('modalTitle');
+const modalLottie = document.getElementById('modalLottie');
+const modalPriceValue = document.getElementById('modalPriceValue');
+const modalBuyStars = document.getElementById('modalBuyStars');
+const modalBuyGift = document.getElementById('modalBuyGift');
+const modalBuyPrice = document.getElementById('modalBuyPrice');
+const modalShort = document.getElementById('modalShort');
+
+const purchaseOverlay = document.getElementById('purchaseOverlay');
+const purchasedMedia = document.getElementById('purchasedMedia');
+const purchaseCloseBtn = document.getElementById('purchaseCloseBtn');
+
+let activeCard = null;
+let lastLottieUrl = null;
+
+function openItemModal(cardEl){
+  activeCard = cardEl;
+  const title = cardEl.getAttribute('aria-label') || 'Подарок';
+  const price = cardEl.querySelector('.price .price-value')?.textContent?.trim() || cardEl.querySelector('.price-value')?.textContent?.trim() || '0';
+  const lottieUrl = cardEl.querySelector('.media.lottie')?.getAttribute('data-lottie-url') || '';
+  const invoice = cardEl.getAttribute('data-invoice-url') || '#';
+
+  modalTitle.textContent = title;
+  modalPriceValue.textContent = price;
+  modalBuyPrice.textContent = price;
+  modalShort.textContent = ''; // можешь заполнить описание
+  modalBuyGift.href = invoice;
+  modalBuyStars.href = document.getElementById('bannerBtn').href || '#';
+
+  // load lottie into modalLottie
+  modalLottie.innerHTML = '';
+  if(lottieUrl){
+    lastLottieUrl = lottieUrl;
+    const c = document.createElement('div');
+    c.style.width = '100%'; c.style.height = '100%';
+    c.setAttribute('data-lottie-url', lottieUrl);
+    modalLottie.appendChild(c);
+    loadLottieFor(c);
+  } else {
+    modalLottie.innerHTML = '<div class="lottie-placeholder">Нет анимации</div>';
+  }
+
+  itemOverlay.classList.add('open'); itemOverlay.setAttribute('aria-hidden','false');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeItemModal(){
+  modalLottie.innerHTML = '';
+  itemOverlay.classList.remove('open'); itemOverlay.setAttribute('aria-hidden','true');
+  document.body.style.overflow = '';
+}
+
+/* bind card clicks */
+document.querySelectorAll('.card').forEach(card=>{
+  card.addEventListener('click', (e)=>{
+    // если клик пришёл по ссылке внутри — ничего. но у нас нет ссылок, открываем модалку
+    openItemModal(card);
+  });
+});
+
+/* close modal */
+modalCloseBtn.addEventListener('click', closeItemModal);
+itemOverlay.addEventListener('click', (e)=>{ if(e.target === itemOverlay) closeItemModal(); });
+
+/* Buy gift - opens invoice (in new tab) */
+modalBuyGift.addEventListener('click', (e)=>{
+  // Allow default navigation. After real payment your backend should call window.handlePaymentSuccess()
+  // You can open in popup if needed:
+  // const url = modalBuyGift.href; window.open(url, '_blank');
+});
+
+/* ---------- Payment success handler ----------
+   External system should call window.handlePaymentSuccess() after confirmed payment.
+   For testing you can call it manually in console.
+*/
+window.handlePaymentSuccess = function(paymentData){
+  // close item modal if open
+  closeItemModal();
+
+  // prepare purchased media: try activeCard first, otherwise use lastLottieUrl
+  purchasedMedia.innerHTML = '';
+  let lottieUrl = null;
+  if(activeCard) lottieUrl = activeCard.querySelector('.media.lottie')?.getAttribute('data-lottie-url') || null;
+  if(!lottieUrl) lottieUrl = lastLottieUrl || null;
+
+  if(lottieUrl){
+    const c = document.createElement('div');
+    c.style.width = '100%'; c.style.height = '100%';
+    c.setAttribute('data-lottie-url', lottieUrl);
+    purchasedMedia.appendChild(c);
+    loadLottieFor(c);
+  } else {
+    purchasedMedia.innerHTML = '<div class="lottie-placeholder">Нет медиа</div>';
+  }
+
+  purchaseOverlay.classList.add('open'); purchaseOverlay.setAttribute('aria-hidden','false');
+  document.body.style.overflow = 'hidden';
+};
+
+function closePurchaseModal(){
+  purchasedMedia.innerHTML = '';
+  purchaseOverlay.classList.remove('open'); purchaseOverlay.setAttribute('aria-hidden','true');
+  document.body.style.overflow = '';
+}
+purchaseCloseBtn.addEventListener('click', closePurchaseModal);
+purchaseOverlay.addEventListener('click', (e)=>{ if(e.target === purchaseOverlay) closePurchaseModal(); });
+
+/* ---------- Tabbar clicks visual ---------- */
 document.querySelectorAll('.tabs .tab').forEach(tab=>{
   tab.addEventListener('click', ()=>{
-    document.querySelectorAll('.tabs .tab').forEach(t=>{
-      t.classList.remove('active');
-      t.setAttribute('aria-selected','false');
-    });
-    tab.classList.add('active');
-    tab.setAttribute('aria-selected','true');
-    // сюда можно добавить переходы/открытие модального окна и т.д.
+    document.querySelectorAll('.tabs .tab').forEach(t=>{ t.classList.remove('active'); t.setAttribute('aria-selected','false'); });
+    tab.classList.add('active'); tab.setAttribute('aria-selected','true');
   });
 });
 
-/* ---------- Resize handler (как просил) ---------- */
+/* ---------- resize handler ---------- */
 let resizeTimer = null;
-window.addEventListener('resize', () => {
-  if (resizeTimer) clearTimeout(resizeTimer);
-  resizeTimer = setTimeout(()=> {
-    // при желании можно пересчитать размеры, сейчас оставлено пустым
-  }, 120);
+window.addEventListener('resize', ()=>{
+  if(resizeTimer) clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(()=>{}, 120);
 });
 
-/* ---------- Полезные подсказки (комментарии) ----------
-  - Замена Lottie:
-      <div class="media lottie" data-lottie-url="https://assetsX.lottiefiles.com/packages/lf20_xxx.json"></div>
-
-  - Заменить иконки вкладок:
-      <img src="/path/to/your/icon1.png">
-
-  - Ссылка кнопки баннера:
-      document.getElementById('bannerBtn').href = 'https://your-link.example';
-
-  - Первый товар: data-sold="false" (в наличии) и синяя ленточка "1 из 1000".
-    Второй товар: data-sold="true" (распродан) и ленточка "Продано".
-
-  - Если GSAP не загружается — анимации скрытия/показа будут упрощёнными.
---------------------------------------------------------------- */
-
-if(typeof gsap === 'undefined'){
-  console.warn('GSAP не загружен — плавные анимации скрыть/показ упрощены.');
-}
+/* init: show warnings if libs missing */
+if(typeof gsap === 'undefined') console.warn('GSAP не загружен — анимации скрыть/показ упрощены.');
 </script>
 </body>
 </html>
