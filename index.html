@@ -192,9 +192,6 @@ body{
 }
 
 
-
-
-
 .ribbon.sold { background: linear-gradient(180deg, #ff8a95, #e64655); }
 .ribbon.stock { background: linear-gradient(90deg,#66c2ff,#3aa6ff); }
 
@@ -247,7 +244,7 @@ body{
 .modal-media{ width:100%; height:100%; display:flex; align-items:center; justify-content:center; }
 
 .modal-bottom{
-  padding:12px 16px; display:flex; flex-direction:column; gap:8px;
+  padding:18px 16px; display:flex; flex-direction:column; gap:8px;
 }
 .price-row{ display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
 .price-pill{
@@ -303,27 +300,27 @@ body{
 
     <!-- Grid -->
     <div class="grid" id="cardsGrid" aria-live="polite">
-      <article class="card" id="card1" data-sold="false" data-invoice-url="#" role="article" aria-label="Подарок 1">
-        <div class="ribbon stock" aria-hidden="true">1 из 1000</div>
+      <article class="card" id="card1" data-sold="false" data-invoice-url="#" role="article" aria-label="1 из 100">
+        <div class="ribbon stock" aria-hidden="true">1 из 100</div>
         <div class="media lottie" data-lottie-url="https://raw.githubusercontent.com/vovashmyhol/shop/refs/heads/main/002_DOG%20(1).json">
           <div class="lottie-placeholder">Lottie animation 1</div>
         </div>
         <div class="footer">
           <div class="price">
             <img src="stars-DBKMczxe.png" alt="icon" class="price-icon">
-            <span class="price-value">15</span>
+            <span class="price-value">10</span>
           </div>
         </div>
       </article>
-      <article class="card" id="card2" data-sold="true" data-invoice-url="#" role="article" aria-label="Подарок 2 (продан)">
-        <div class="ribbon sold" aria-hidden="true">Продано</div>
+      <article class="card" id="card2" data-sold="false" data-invoice-url="#" role="article" aria-label="1 из 50">
+        <div class="ribbon stock" aria-hidden="true">1 из 50</div>
         <div class="media lottie" data-lottie-url="https://raw.githubusercontent.com/vovashmyhol/shop/refs/heads/main/002_DOG%20(1).json">
           <div class="lottie-placeholder">Lottie animation 2</div>
         </div>
         <div class="footer">
           <div class="price">
             <img src="stars-DBKMczxe.png" alt="icon" class="price-icon">
-            <span class="price-value">15</span>
+            <span class="price-value">25</span>
           </div>
         </div>
       </article>
