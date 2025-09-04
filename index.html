@@ -15,290 +15,249 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 
 <style>
-  :root{
-    --bg:#0f1116;
-    --bg-soft:#151822;
-    --card-bg:#1a1e2a;
-    --text:#e7ecf3;
-    --muted:#c8cdd6;
-    --accent-blue-start:#3abefc;
-    --accent-blue-end:#6aa8ff;
-    --gold:#FFD14B;
-    --radius:18px;
-    --card-footer-h:56px; /* высота блока с ценой */
-    --tab-size:46px; /* размер нижней вкладки */
-    --shadow: 0 10px 30px rgba(0,0,0,.35);
-  }
+:root{
+  --bg:#0f1116;
+  --bg-soft:#151822;
+  --card-bg:#1a1e2a;
+  --text:#e7ecf3;
+  --muted:#c8cdd6;
+  --accent-blue-start:#3abefc;
+  --accent-blue-end:#6aa8ff;
+  --gold:#FFD14B;
+  --radius:18px;
+  --card-footer-h:56px; 
+  --tab-size:46px; 
+  --shadow: 0 10px 30px rgba(0,0,0,.35);
+}
 
-  *{box-sizing:border-box}
-  html,body{height:100%}
-  body{
-    margin:0;
-    background:var(--bg);
-    color:var(--text);
-    font-family: system-ui, -apple-system, "Segoe UI", Roboto, Inter, "SF Pro", Arial, sans-serif;
-    -webkit-font-smoothing:antialiased;
-    -moz-osx-font-smoothing:grayscale;
-    line-height:1.35;
-  }
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Inter, "SF Pro", Arial, sans-serif;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  line-height:1.35;
+}
 
-  /* --- App container --- */
-  .app{
-    max-width: 560px;
-    margin: 0 auto;
-    min-height: 100vh;
-    padding-bottom: calc(var(--tab-size) + 28px); /* место под таббар */
-  }
+/* --- App container --- */
+.app{
+  max-width: 560px;
+  margin: 0 auto;
+  min-height: 100vh;
+  padding-bottom: calc(var(--tab-size) + 28px); 
+}
 
-  /* --- Topbar --- */
-  .topbar{
-    position: sticky;
-    top:0;
-    z-index:40;
-    padding: 6px 12px;
-    background: linear-gradient(180deg, rgba(15,17,22,.98), rgba(15,17,22,.92) 70%, rgba(15,17,22,0));
-    border-bottom: 1px solid rgba(255,255,255,.04);
-    backdrop-filter: blur(6px);
-  }
-  .profile{ display:flex; align-items:center; gap:8px; }
-  .avatar{
-    width:40px; height:40px; border-radius:50%;
-    background:#222; background-position:center; background-size:cover;
-    border:2px solid #303544; flex-shrink:0;
-  }
-  .name{ font-weight:700; font-size:17px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+/* --- Topbar --- */
+.topbar{
+  position: sticky;
+  top:0;
+  z-index:40;
+  padding: 6px 12px;
+  background: linear-gradient(180deg, rgba(15,17,22,.98), rgba(15,17,22,.92) 70%, rgba(15,17,22,0));
+  border-bottom: 1px solid rgba(255,255,255,.04);
+  backdrop-filter: blur(6px);
+}
+.profile{ display:flex; align-items:center; gap:8px; }
+.avatar{
+  width:40px; height:40px; border-radius:50%;
+  background:#222; background-position:center; background-size:cover;
+  border:2px solid #303544; flex-shrink:0;
+}
+.name{ font-weight:700; font-size:17px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 
-  /* --- Banner (уменьшенный) --- */
-  .banner{
-    margin:12px 14px;
-    padding: 10px 12px;
-    border-radius: 14px;
-    background: linear-gradient(90deg, var(--accent-blue-start), var(--accent-blue-end));
-    display:flex; align-items:center; justify-content:space-between;
-    box-shadow: var(--shadow);
-  }
-  .banner .title{ font-weight:800; font-size:15px }
-  .banner .btn{
-    background: #fff;
-    color: #09b5ff;
-    font-weight:700;
-    padding:6px 10px;
-    border-radius:12px;
-    text-decoration:none;
-    font-size:13px;
-    display:inline-flex; align-items:center; gap:8px;
-  }
+/* --- Banner --- */
+.banner{
+  margin:12px 14px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: linear-gradient(90deg, var(--accent-blue-start), var(--accent-blue-end));
+  display:flex; align-items:center; justify-content:space-between;
+  box-shadow: var(--shadow);
+}
+.banner .title{ font-weight:800; font-size:15px }
+.banner .btn{
+  background: #fff;
+  color: #09b5ff;
+  font-weight:700;
+  padding:6px 10px;
+  border-radius:12px;
+  text-decoration:none;
+  font-size:13px;
+  display:inline-flex; align-items:center; gap:8px;
+}
 
-  /* --- Toggle --- */
-  .toggle{
-    margin: 10px 14px 0;
-    padding: 12px 14px;
-    background: var(--bg-soft);
-    border:1px solid #222838;
-    border-radius: 16px;
-    display:flex; align-items:center; gap:12px;
-  }
-  .toggle input{
-    appearance:none; width:22px;height:22px;border-radius:6px;
-    border:2px solid #556079; display:grid; place-items:center;
-    background:#0f1116;
-  }
-  .toggle input:checked{ background:#1f283b; border-color:#6aa8ff; }
-  .toggle input:checked::after{ content:"✓"; color:#a8c9ff; font-size:14px; line-height:1; }
-  .toggle label{ color: var(--text); font-weight:600; cursor:pointer; user-select:none; }
+/* --- Toggle --- */
+.toggle{
+  margin: 10px 14px 0;
+  padding: 12px 14px;
+  background: var(--bg-soft);
+  border:1px solid #222838;
+  border-radius: 16px;
+  display:flex; align-items:center; gap:12px;
+}
+.toggle input{
+  appearance:none; width:22px;height:22px;border-radius:6px;
+  border:2px solid #556079; display:grid; place-items:center;
+  background:#0f1116;
+}
+.toggle input:checked{ background:#1f283b; border-color:#6aa8ff; }
+.toggle input:checked::after{ content:"✓"; color:#a8c9ff; font-size:14px; line-height:1; }
+.toggle label{ color: var(--text); font-weight:600; cursor:pointer; user-select:none; }
 
-  /* --- Grid: всегда 2 карточки в ряд --- */
-  .grid{
-    display:grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap:14px;
-    padding: 14px;
-    justify-items:center;
-    align-items:start;
-  }
+/* --- Grid --- */
+.grid{
+  display:grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap:14px;
+  padding: 14px;
+  justify-items:center;
+  align-items:start;
+}
 
-  /* --- Card --- */
-  .card{
-    position:relative;
-    overflow:hidden;
-    border-radius:16px;
-    background: radial-gradient(120% 120% at 0% 0%, #20263a 0%, #1a1f2d 40%, #161b28 100%);
-    border:1px solid #262c41;
-    width:100%;
-    max-width: 260px;
-    height: 260px; /* baseline */
-    display:flex;
-    flex-direction:column;
-    justify-content:flex-end;
-    box-shadow: var(--shadow);
-    transition: transform .12s ease;
-    cursor:pointer;
-  }
-  /* На телефонах — карточки ниже (фиксированная высота) */
-  @media (max-width:420px){
-    .card{ height: 200px; }
-  }
-  .card:active{ transform: translateY(1px); }
+/* --- Card --- */
+.card{
+  position:relative;
+  overflow:hidden;
+  border-radius:16px;
+  background: radial-gradient(120% 120% at 0% 0%, #20263a 0%, #1a1f2d 40%, #161b28 100%);
+  border:1px solid #262c41;
+  width:100%;
+  max-width: 260px;
+  height: 260px; 
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-end;
+  box-shadow: var(--shadow);
+  transition: transform .12s ease;
+  cursor:pointer;
+}
+@media (max-width:420px){
+  .card{ height: 200px; }
+}
+.card:active{ transform: translateY(1px); }
 
-  /* Media area (анимация) */
-  .card .media{
-    position: absolute;
-    left:0; right:0; top:0;
-    height: calc(100% - var(--card-footer-h));
-    display:flex; align-items:center; justify-content:center;
-    padding: 14px;
-  }
-  .media canvas, .media svg, .media img, .media div{ max-width:100%; max-height:100%; }
+.card .media{
+  position: absolute;
+  left:0; right:0; top:0;
+  height: calc(100% - var(--card-footer-h));
+  display:flex; align-items:center; justify-content:center;
+  padding: 14px;
+}
+.media canvas, .media svg, .media img, .media div{ max-width:100%; max-height:100%; }
 
-  /* Footer / price — ЖЁЛТАЯ ПЛАШКА как на фото */
-  .card .footer{
-    height: var(--card-footer-h);
-    display:flex; align-items:center; justify-content:center;
-    position:relative;
-    padding: 10px 14px;
-    background: linear-gradient(180deg, rgba(11,13,18,.35), rgba(11,13,18,.55));
-    border-top: 1px solid rgba(255,255,255,.03);
-    backdrop-filter: blur(4px);
-  }
-  /* делаем цену в закрашенном жёлтом полупрозрачном прямоугольнике */
-  .card .footer .price {
-    display:inline-flex; align-items:center; gap:8px;
-    background: linear-gradient(180deg, rgba(255,209,75,0.95), rgba(255,195,45,0.95));
-    padding:8px 12px; border-radius:12px;
-    color:#1f1f1f; font-weight:800; font-size:15px;
-    box-shadow: 0 6px 16px rgba(0,0,0,.22);
-  }
-  .price-icon { width:16px; height:16px; object-fit:contain; border-radius:3px; }
+.card .footer{
+  height: var(--card-footer-h);
+  display:flex; align-items:center; justify-content:center;
+  position:relative;
+  padding: 10px 14px;
+  background: linear-gradient(180deg, rgba(11,13,18,.35), rgba(11,13,18,.55));
+  border-top: 1px solid rgba(255,255,255,.03);
+  backdrop-filter: blur(4px);
+}
+.card .footer .price {
+  display:inline-flex; align-items:center; gap:8px;
+  background: linear-gradient(180deg, rgba(255,209,75,0.95), rgba(255,195,45,0.95));
+  padding:8px 12px; border-radius:12px;
+  color:#1f1f1f; font-weight:800; font-size:15px;
+  box-shadow: 0 6px 16px rgba(0,0,0,.22);
+}
+.price-icon { width:16px; height:16px; object-fit:contain; border-radius:3px; }
 
-  /* Ribbon */
-  .ribbon{
-    position:absolute;
-    top:12px;
-    right:-42px;
-    transform: rotate(35deg);
-    color:white; font-weight:800; font-size:13px; letter-spacing:.3px;
-    padding: 8px 46px; box-shadow:0 8px 16px rgba(0,0,0,.25);
-    border-top-left-radius:6px; border-top-right-radius:6px;
-    pointer-events:none;
-  }
-  .ribbon.sold { background: linear-gradient(180deg, #ff8a95, #e64655); }
-  .ribbon.stock { background: linear-gradient(90deg,#66c2ff,#3aa6ff); }
+.ribbon{
+  position:absolute;
+  top:12px;
+  right:-42px;
+  transform: rotate(35deg);
+  color:white; font-weight:800; font-size:13px; letter-spacing:.3px;
+  padding: 8px 46px; box-shadow:0 8px 16px rgba(0,0,0,.25);
+  border-top-left-radius:6px; border-top-right-radius:6px;
+  pointer-events:none;
+}
+.ribbon.sold { background: linear-gradient(180deg, #ff8a95, #e64655); }
+.ribbon.stock { background: linear-gradient(90deg,#66c2ff,#3aa6ff); }
 
-  /* --- Tabbar (уменьшенный) --- */
-  .tabbar{
-    position: fixed; left:0; right:0; bottom:0; z-index:60;
-    display:flex; justify-content:center; align-items:center;
-    padding:8px 10px; background: linear-gradient(0deg, rgba(15,17,22,1), rgba(15,17,22,.96));
-    border-top:1px solid rgba(255,255,255,.03);
-  }
-  .tabs{
-    width:min(560px, 100%); display:flex; gap:12px; justify-content:center;
-  }
-  .tab{
-    width: var(--tab-size); height: var(--tab-size);
-    border-radius:12px; background:#111523; border:1px solid #252b3d;
-    display:grid; place-items:center; cursor:pointer;
-    box-shadow: 0 8px 18px rgba(0,0,0,.25);
-    transition: transform .08s;
-    overflow:hidden;
-  }
-  .tab img{ width:20px; height:20px; object-fit:contain; pointer-events:none; display:block }
-  .tab.active{ outline:2px solid #3f69ff55; transform: translateY(-2px); }
+/* --- Tabbar --- */
+.tabbar{
+  position: fixed; left:0; right:0; bottom:0; z-index:60;
+  display:flex; justify-content:center; align-items:center;
+  padding:8px 10px; background: linear-gradient(0deg, rgba(15,17,22,1), rgba(15,17,22,.96));
+  border-top:1px solid rgba(255,255,255,.03);
+}
+.tabs{
+  width:min(560px, 100%); display:flex; gap:12px; justify-content:center;
+}
+.tab{
+  width: var(--tab-size); height: var(--tab-size);
+  border-radius:12px; background:#111523; border:1px solid #252b3d;
+  display:grid; place-items:center; cursor:pointer;
+  box-shadow: 0 8px 18px rgba(0,0,0,.25);
+  transition: transform .08s;
+  overflow:hidden;
+}
+.tab img{ width:20px; height:20px; object-fit:contain; pointer-events:none; display:block }
+.tab.active{ outline:2px solid #3f69ff55; transform: translateY(-2px); }
 
-  /* --- FULLSCREEN MODAL (overlay covers all) --- */
-  .overlay {
-    position: fixed;
-    inset: 0;
-    z-index: 2000;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    background: rgba(6,8,10,0.85);
-    backdrop-filter: blur(6px);
-  }
-  .overlay.open { display:flex; }
+/* ========= FULLSCREEN MODAL ========= */
+.overlay, .purchase-overlay{
+  position: fixed; inset:0; z-index:2000; display:none;
+  align-items: center; justify-content: center;
+  background: rgba(6,8,10,0.95); backdrop-filter: blur(6px);
+}
+.overlay.open, .purchase-overlay.open{ display:flex; }
+.modal-card{
+  width:100%; height:100%; max-height:100vh;
+  background: linear-gradient(180deg,#0f1116,#0b0d10);
+  border-radius:0;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+  padding-bottom:16px;
+}
+.modal-top{ display:flex; align-items:center; justify-content:space-between; padding:16px 18px; border-bottom:1px solid rgba(255,255,255,0.03); }
+.modal-title { font-weight:800; font-size:20px; }
+.modal-close { background:transparent; border:0; color:var(--muted); font-weight:700; cursor:pointer; font-size:16px; }
 
-  /* central modal card — максимально похож на фото: светлый центр, крупная анимация, price pill, buttons */
-  .modal-card {
-    width: min(760px, 96%);
-    max-width: 920px;
-    height: min(860px, 94vh);
-    background: linear-gradient(180deg,#0f1116,#0b0d10);
-    border-radius: 20px;
-    box-shadow: 0 30px 90px rgba(0,0,0,.7);
-    display:flex;
-    flex-direction:column;
-    overflow:hidden;
-  }
+.modal-body{ flex:1; display:flex; align-items:center; justify-content:center; padding: 8px; overflow:auto; }
+.modal-media-wrap{
+  width:95%; max-width:720px; height:60%;
+  display:flex; align-items:center; justify-content:center;
+}
+.modal-media{ width:100%; height:100%; display:flex; align-items:center; justify-content:center; }
 
-  /* top area (close icon at top-right) */
-  .modal-top {
-    display:flex; align-items:center; justify-content:space-between;
-    padding: 16px 18px;
-    border-bottom:1px solid rgba(255,255,255,0.03);
-  }
-  .modal-title { font-weight:800; font-size:20px; }
-  .modal-close { background:transparent; border:0; color:var(--muted); font-weight:700; cursor:pointer; font-size:16px; }
+.modal-bottom{
+  padding:12px 16px; display:flex; flex-direction:column; gap:8px;
+}
+.price-row{ display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
+.price-pill{
+  display:inline-flex; align-items:center; gap:10px;
+  background: linear-gradient(180deg, rgba(255,209,75,0.98), rgba(255,195,45,0.98));
+  color:#111; padding:10px 14px; border-radius:12px; font-weight:900; font-size:16px; box-shadow: 0 8px 20px rgba(0,0,0,.35);
+}
+.modal-actions{ display:flex; gap:12px; flex-direction:column; }
+.btn-ghost{
+  background: rgba(255,255,255,0.06); color:#fff; padding:14px; border-radius:12px; text-align:center; border:1px solid rgba(255,255,255,0.03); font-weight:800; text-decoration:none;
+}
+.btn-primary{
+  background: linear-gradient(90deg,#2fa6ff,#1a73ff); color:#fff; padding:16px; border-radius:12px; text-align:center; font-weight:900; text-decoration:none;
+}
 
-  /* media area: big center */
-  .modal-body {
-    flex:1; display:flex; align-items:center; justify-content:center; padding: 18px;
-  }
-  .modal-media-wrap {
-    width: min(720px, 88%);
-    max-width: 860px;
-    height: min(520px, 62vh);
-    border-radius: 14px;
-    background: linear-gradient(180deg, rgba(20,22,28,0.45), rgba(8,9,12,0.35));
-    display:flex; align-items:center; justify-content:center;
-    border:1px solid rgba(255,255,255,0.03);
-    box-shadow: 0 20px 60px rgba(0,0,0,.6);
-    position:relative;
-  }
-  .modal-media { width:100%; height:100%; display:flex; align-items:center; justify-content:center; padding:8px; }
+/* PURCHASE FULLSCREEN */
+.purchase-card{
+  width:100%; height:100%; max-height:100vh;
+  background: linear-gradient(180deg,#0b0d11,#0e1114);
+  display:flex; flex-direction:column; align-items:center; justify-content:center; padding:16px;
+}
+.purchase-media{ width:95%; height:65%; display:flex; align-items:center; justify-content:center; }
+.purchase-close{
+  margin-top:auto; width:95%; max-width:720px; text-align:center;
+  background: #2fa6ff; color:#fff; padding:16px; border-radius:12px; font-weight:900; cursor:pointer;
+}
 
-  /* bottom area: price pill left, buttons bottom */
-  .modal-bottom {
-    padding: 16px 18px; border-top:1px solid rgba(255,255,255,0.03); display:flex; flex-direction:column; gap:12px;
-  }
-  .modal-bottom .price-row { display:flex; align-items:center; gap:12px; }
-  .price-pill {
-    display:inline-flex; align-items:center; gap:10px;
-    background: linear-gradient(180deg, rgba(255,209,75,0.98), rgba(255,195,45,0.98));
-    color:#111; padding:10px 14px; border-radius:12px; font-weight:900; font-size:16px; box-shadow: 0 8px 20px rgba(0,0,0,.35);
-  }
-
-  .modal-actions { display:flex; gap:12px; flex-direction:column; }
-  .btn-ghost {
-    background: rgba(255,255,255,0.06); color:#fff; padding:14px; border-radius:12px; text-align:center; border:1px solid rgba(255,255,255,0.03); font-weight:800; text-decoration:none;
-  }
-  .btn-primary {
-    background: linear-gradient(90deg,#2fa6ff,#1a73ff); color:#fff; padding:16px; border-radius:12px; text-align:center; font-weight:900; text-decoration:none;
-  }
-
-  /* Purchase success — full-screen modal with big blue close button bottom full width */
-  .purchase-overlay { position: fixed; inset:0; z-index:3000; display:none; align-items:center; justify-content:center; background: rgba(4,6,8,0.8); }
-  .purchase-overlay.open { display:flex; }
-  .purchase-card {
-    width: min(720px, 94%); max-width:900px; height: min(720px, 92vh);
-    background: linear-gradient(180deg,#0b0d11,#0e1114); border-radius:16px; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:20px; position:relative;
-  }
-  .purchase-media { width:80%; height:60%; display:flex; align-items:center; justify-content:center; }
-  .purchase-close {
-    position:absolute; bottom:18px; left:50%; transform:translateX(-50%); width: calc(100% - 40px); max-width: 720px;
-    background: #2fa6ff; color:#fff; padding:14px; border-radius:12px; font-weight:900; text-align:center; cursor:pointer;
-  }
-
-  /* small screens adjustments */
-  @media (max-width:600px){
-    .modal-card { width:95%; height:100vh; border-radius:0; }
-    .modal-media-wrap { height: 56vh; width:92%; }
-    .purchase-card { width:94%; height:100vh; border-radius:0; }
-  }
-
-  /* helpers */
-  .hidden { display:none !important; }
-  .lottie-placeholder{ color:var(--muted); font-size:13px; text-align:center; padding:8px }
+.hidden { display:none !important; }
+.lottie-placeholder{ color:var(--muted); font-size:13px; text-align:center; padding:8px }
 </style>
 </head>
 <body>
@@ -323,14 +282,12 @@
       <label for="hideSold">Скрыть проданные подарки</label>
     </div>
 
-    <!-- Grid: ровно 2 подарка -->
+    <!-- Grid -->
     <div class="grid" id="cardsGrid" aria-live="polite">
-      <!-- Карточка 1: В НАЛИЧИИ (голубая ленточка "1 из 1000") -->
-      <!-- Добавил data-invoice-url: поставь свою ссылку на оплату сюда -->
       <article class="card" id="card1" data-sold="false" data-invoice-url="#" role="article" aria-label="Подарок 1">
         <div class="ribbon stock" aria-hidden="true">1 из 1000</div>
         <div class="media lottie" data-lottie-url="https://raw.githubusercontent.com/vovashmyhol/shop/refs/heads/main/002_DOG%20(1).json">
-          <div class="lottie-placeholder">Lottie animation 1 — вставьте ссылку в data-lottie-url</div>
+          <div class="lottie-placeholder">Lottie animation 1</div>
         </div>
         <div class="footer">
           <div class="price">
@@ -339,12 +296,10 @@
           </div>
         </div>
       </article>
-
-      <!-- Карточка 2: Продана -->
       <article class="card" id="card2" data-sold="true" data-invoice-url="#" role="article" aria-label="Подарок 2 (продан)">
         <div class="ribbon sold" aria-hidden="true">Продано</div>
         <div class="media lottie" data-lottie-url="https://raw.githubusercontent.com/vovashmyhol/shop/refs/heads/main/002_DOG%20(1).json">
-          <div class="lottie-placeholder">Lottie animation 2 — вставьте ссылку в data-lottie-url</div>
+          <div class="lottie-placeholder">Lottie animation 2</div>
         </div>
         <div class="footer">
           <div class="price">
@@ -371,7 +326,7 @@
     </div>
   </nav>
 
-  <!-- ========= FULLSCREEN ITEM MODAL (копия по фото) ========= -->
+  <!-- FULLSCREEN ITEM MODAL -->
   <div id="itemOverlay" class="overlay" aria-hidden="true" role="dialog" aria-modal="true">
     <div class="modal-card" role="document" aria-label="Детали подарка">
       <div class="modal-top">
@@ -381,9 +336,7 @@
 
       <div class="modal-body">
         <div class="modal-media-wrap">
-          <div id="modalLottie" class="modal-media">
-            <!-- Lottie вставится сюда -->
-          </div>
+          <div id="modalLottie" class="modal-media"></div>
         </div>
       </div>
 
@@ -404,28 +357,15 @@
     </div>
   </div>
 
-  <!-- ========= PURCHASE SUCCESS FULLSCREEN (после оплаты) ========= -->
+  <!-- PURCHASE FULLSCREEN -->
   <div id="purchaseOverlay" class="purchase-overlay" aria-hidden="true" role="dialog" aria-modal="true">
     <div class="purchase-card" role="document" aria-label="Куплено">
-      <div id="purchasedMedia" class="purchase-media">
-        <!-- купленный Lottie здесь -->
-      </div>
+      <div id="purchasedMedia" class="purchase-media"></div>
       <div id="purchaseCloseBtn" class="purchase-close" role="button" tabindex="0">Закрыть</div>
     </div>
   </div>
 
 <script>
-/* ============================
-  СКОРЫЙ ОБЗОР:
-  - Сохранён твой базовый код (Telegram init, lottie, rlottie, gsap hide/show)
-  - Добавлены: full-screen modal (itemOverlay), purchaseOverlay
-  - Клик по карточке открывает itemOverlay с соответствующей Lottie и ценой
-  - modalBuyStars ведёт на banner href (по умолчанию) — можно изменить
-  - modalBuyGift открывает data-invoice-url карточки (если вставишь) — после оплаты вызови window.handlePaymentSuccess()
-  - window.handlePaymentSuccess() откроет purchaseOverlay с купленным Lottie и большим голубым "Закрыть"
-  ============================ */
-
-/* ---------- Telegram WebApp: имя и аватар (как у тебя) ---------- */
 (function initTelegramUser(){
   try {
     if(window.Telegram && Telegram.WebApp){
@@ -455,97 +395,40 @@
         }
       }
     }
-  } catch(err){
-    console.warn('Telegram init error', err);
-  }
+  } catch(err){ console.warn('Telegram init error', err); }
 })();
 
-/* ---------- Lottie / rlottie загрузка (везде) ---------- */
 function loadLottieFor(el){
   const url = el.getAttribute('data-lottie-url');
   el.innerHTML = '';
-  if(!url){
-    el.innerHTML = '<div class="lottie-placeholder">Укажите raw ссылку на Lottie (.json или .tgs)</div>';
-    return;
-  }
-
-  // JSON -> lottie-web
+  if(!url){ el.innerHTML = '<div class="lottie-placeholder">Укажите raw ссылку на Lottie (.json или .tgs)</div>'; return; }
   if(/\.json(\?|$)/i.test(url) && window.lottie){
-    try {
-      lottie.loadAnimation({
-        container: el,
-        renderer: 'svg',
-        loop: true,
-        autoplay: true,
-        path: url
-      });
-      return;
-    } catch(e){
-      el.innerHTML = '<div class="lottie-placeholder">Ошибка загрузки Lottie JSON</div>';
-    }
+    try { lottie.loadAnimation({ container: el, renderer: 'svg', loop: true, autoplay: true, path: url }); return; } 
+    catch(e){ el.innerHTML = '<div class="lottie-placeholder">Ошибка загрузки Lottie JSON</div>'; }
   }
-
-  // .tgs -> rlottie
   if(/\.tgs(\?|$)/i.test(url) && window.rlottie){
-    try {
-      const player = new rlottie.Player({
-        name: 'anim-' + Math.random().toString(36).slice(2),
-        src: url,
-        loop: true,
-        autoplay: true,
-        container: el
-      });
-      el.style.display = 'grid'; el.style.placeItems = 'center';
-      return;
-    } catch(e){
-      el.innerHTML = '<div class="lottie-placeholder">Ошибка загрузки TGS</div>';
-    }
+    try { const player = new rlottie.Player({ name: 'anim-' + Math.random().toString(36).slice(2), src: url, loop: true, autoplay: true, container: el });
+          el.style.display = 'grid'; el.style.placeItems = 'center'; return; } 
+    catch(e){ el.innerHTML = '<div class="lottie-placeholder">Ошибка загрузки TGS</div>'; }
   }
-
-  // fallback: image
   if(/\.(svg|png|jpg|jpeg|gif)(\?|$)/i.test(url)){
-    const img = document.createElement('img');
-    img.src = url; img.alt = 'media';
-    img.style.maxWidth = '100%'; img.style.maxHeight = '100%';
-    el.appendChild(img); return;
+    const img = document.createElement('img'); img.src = url; img.alt = 'media'; img.style.maxWidth='100%'; img.style.maxHeight='100%'; el.appendChild(img); return;
   }
-
   el.innerHTML = '<div class="lottie-placeholder">Неподдерживаемый формат</div>';
 }
 
-/* Загрузим все карточные Lottie (фулл) */
 document.querySelectorAll('.media.lottie').forEach(loadLottieFor);
 
-/* ---------- GSAP: скрыть/показ распроданных ---------- */
 const hideSoldCheckbox = document.getElementById('hideSold');
 const soldSelector = '[data-sold="true"]';
-const soldCards = () => Array.from(document.querySelectorAll(soldSelector));
-soldCards().forEach(c => { c.style.willChange = 'opacity, transform'; c.dataset._hidden = '0'; });
+function soldCards(){ return Array.from(document.querySelectorAll(soldSelector)); }
 
-function hideSoldAnimated(){
-  const cards = soldCards();
-  cards.forEach(c=>{
-    if(c.dataset._hidden === '1') return;
-    gsap.to(c, { duration:0.36, ease:'power2.out', opacity:0, scale:0.98, y:-8, onComplete:()=>{ c.style.display='none'; c.dataset._hidden='1'; } });
-  });
-}
-function showSoldAnimated(){
-  const cards = document.querySelectorAll(soldSelector);
-  cards.forEach(c=>{
-    if(c.dataset._hidden !== '1') return;
-    c.style.display = ''; gsap.set(c,{opacity:0, scale:0.98, y:-8});
-    gsap.to(c,{ duration:0.4, ease:'power2.out', opacity:1, scale:1, y:0, onComplete:()=>{ c.dataset._hidden='0'; } });
-  });
-}
-hideSoldCheckbox.addEventListener('change', ()=>{
-  if(typeof gsap === 'undefined'){ soldCards().forEach(c => { c.style.display = hideSoldCheckbox.checked ? 'none' : ''; }); return; }
-  if(hideSoldCheckbox.checked) hideSoldAnimated(); else showSoldAnimated();
-});
-window.addEventListener('load', ()=>{
-  if(hideSoldCheckbox.checked) setTimeout(hideSoldAnimated,120); else document.querySelectorAll(soldSelector).forEach(c=>{ c.dataset._hidden='0'; c.style.display=''; c.style.opacity=1; c.style.transform='none'; });
-});
+function hideSoldAnimated(){ soldCards().forEach(c=>{ if(c.dataset._hidden==='1')return; gsap.to(c,{duration:0.36, ease:'power2.out', opacity:0, scale:0.98, y:-8, onComplete:()=>{ c.style.display='none'; c.dataset._hidden='1'; } }); }); }
+function showSoldAnimated(){ soldCards().forEach(c=>{ if(c.dataset._hidden!=='1')return; c.style.display=''; gsap.set(c,{opacity:0, scale:0.98, y:-8}); gsap.to(c,{duration:0.4, ease:'power2.out', opacity:1, scale:1, y:0, onComplete:()=>{ c.dataset._hidden='0'; }}); }); }
 
-/* ---------- MODAL LOGIC ---------- */
+hideSoldCheckbox.addEventListener('change', ()=>{ if(hideSoldCheckbox.checked) hideSoldAnimated(); else showSoldAnimated(); });
+window.addEventListener('load', ()=>{ if(hideSoldCheckbox.checked) setTimeout(hideSoldAnimated,120); else soldCards().forEach(c=>{ c.dataset._hidden='0'; c.style.display=''; c.style.opacity=1; c.style.transform='none'; }); });
+
 const itemOverlay = document.getElementById('itemOverlay');
 const modalCloseBtn = document.getElementById('modalCloseBtn');
 const modalTitle = document.getElementById('modalTitle');
@@ -566,112 +449,68 @@ let lastLottieUrl = null;
 function openItemModal(cardEl){
   activeCard = cardEl;
   const title = cardEl.getAttribute('aria-label') || 'Подарок';
-  const price = cardEl.querySelector('.price .price-value')?.textContent?.trim() || cardEl.querySelector('.price-value')?.textContent?.trim() || '0';
+  const price = cardEl.querySelector('.price-value')?.textContent?.trim() || '0';
   const lottieUrl = cardEl.querySelector('.media.lottie')?.getAttribute('data-lottie-url') || '';
   const invoice = cardEl.getAttribute('data-invoice-url') || '#';
 
   modalTitle.textContent = title;
   modalPriceValue.textContent = price;
   modalBuyPrice.textContent = price;
-  modalShort.textContent = ''; // можешь заполнить описание
+  modalShort.textContent = ''; 
   modalBuyGift.href = invoice;
   modalBuyStars.href = document.getElementById('bannerBtn').href || '#';
 
-  // load lottie into modalLottie
   modalLottie.innerHTML = '';
-  if(lottieUrl){
-    lastLottieUrl = lottieUrl;
-    const c = document.createElement('div');
-    c.style.width = '100%'; c.style.height = '100%';
-    c.setAttribute('data-lottie-url', lottieUrl);
-    modalLottie.appendChild(c);
-    loadLottieFor(c);
-  } else {
-    modalLottie.innerHTML = '<div class="lottie-placeholder">Нет анимации</div>';
-  }
+  if(lottieUrl){ lastLottieUrl = lottieUrl; const c=document.createElement('div'); c.style.width='100%'; c.style.height='100%'; c.setAttribute('data-lottie-url', lottieUrl); modalLottie.appendChild(c); loadLottieFor(c); }
+  else modalLottie.innerHTML = '<div class="lottie-placeholder">Нет анимации</div>';
 
   itemOverlay.classList.add('open'); itemOverlay.setAttribute('aria-hidden','false');
   document.body.style.overflow = 'hidden';
 }
 
-function closeItemModal(){
-  modalLottie.innerHTML = '';
-  itemOverlay.classList.remove('open'); itemOverlay.setAttribute('aria-hidden','true');
-  document.body.style.overflow = '';
-}
+function closeItemModal(){ modalLottie.innerHTML=''; itemOverlay.classList.remove('open'); itemOverlay.setAttribute('aria-hidden','true'); document.body.style.overflow=''; }
 
-/* bind card clicks */
-document.querySelectorAll('.card').forEach(card=>{
-  card.addEventListener('click', (e)=>{
-    // если клик пришёл по ссылке внутри — ничего. но у нас нет ссылок, открываем модалку
-    openItemModal(card);
-  });
-});
-
-/* close modal */
+document.querySelectorAll('.card').forEach(card=>{ card.addEventListener('click', ()=>{ openItemModal(card); }); });
 modalCloseBtn.addEventListener('click', closeItemModal);
-itemOverlay.addEventListener('click', (e)=>{ if(e.target === itemOverlay) closeItemModal(); });
+itemOverlay.addEventListener('click', (e)=>{ if(e.target===itemOverlay) closeItemModal(); });
 
-/* Buy gift - opens invoice (in new tab) */
 modalBuyGift.addEventListener('click', (e)=>{
-  // Allow default navigation. After real payment your backend should call window.handlePaymentSuccess()
-  // You can open in popup if needed:
-  // const url = modalBuyGift.href; window.open(url, '_blank');
+  e.preventDefault();
+  const price = parseInt(modalPriceValue.textContent||0,10);
+  if(window.Telegram && Telegram.WebApp && Telegram.WebApp.openInvoice){
+    Telegram.WebApp.openInvoice({ 
+      title: modalTitle.textContent, 
+      description: modalShort.textContent||'Подарок', 
+      payload: 'gift_'+Date.now(), 
+      provider_token: 'YOUR_PROVIDER_TOKEN', // <== вставь токен
+      currency: 'USD', 
+      prices: [{label: 'Цена', amount: price*100}], 
+      need_email: false, 
+      need_phone_number: false
+    }, function(invoiceResult){
+      if(invoiceResult.status==='paid'){ window.handlePaymentSuccess(); }
+    });
+  } else { window.open(modalBuyGift.href,'_blank'); }
 });
 
-/* ---------- Payment success handler ----------
-   External system should call window.handlePaymentSuccess() after confirmed payment.
-   For testing you can call it manually in console.
-*/
-window.handlePaymentSuccess = function(paymentData){
-  // close item modal if open
+window.handlePaymentSuccess = function(){
   closeItemModal();
-
-  // prepare purchased media: try activeCard first, otherwise use lastLottieUrl
-  purchasedMedia.innerHTML = '';
-  let lottieUrl = null;
-  if(activeCard) lottieUrl = activeCard.querySelector('.media.lottie')?.getAttribute('data-lottie-url') || null;
-  if(!lottieUrl) lottieUrl = lastLottieUrl || null;
-
-  if(lottieUrl){
-    const c = document.createElement('div');
-    c.style.width = '100%'; c.style.height = '100%';
-    c.setAttribute('data-lottie-url', lottieUrl);
-    purchasedMedia.appendChild(c);
-    loadLottieFor(c);
-  } else {
-    purchasedMedia.innerHTML = '<div class="lottie-placeholder">Нет медиа</div>';
-  }
-
+  purchasedMedia.innerHTML='';
+  let lottieUrl = activeCard?.querySelector('.media.lottie')?.getAttribute('data-lottie-url') || lastLottieUrl || null;
+  if(lottieUrl){ const c=document.createElement('div'); c.style.width='100%'; c.style.height='100%'; c.setAttribute('data-lottie-url', lottieUrl); purchasedMedia.appendChild(c); loadLottieFor(c); }
+  else purchasedMedia.innerHTML = '<div class="lottie-placeholder">Нет медиа</div>';
   purchaseOverlay.classList.add('open'); purchaseOverlay.setAttribute('aria-hidden','false');
-  document.body.style.overflow = 'hidden';
+  document.body.style.overflow='hidden';
 };
 
-function closePurchaseModal(){
-  purchasedMedia.innerHTML = '';
-  purchaseOverlay.classList.remove('open'); purchaseOverlay.setAttribute('aria-hidden','true');
-  document.body.style.overflow = '';
-}
+function closePurchaseModal(){ purchasedMedia.innerHTML=''; purchaseOverlay.classList.remove('open'); purchaseOverlay.setAttribute('aria-hidden','true'); document.body.style.overflow=''; }
 purchaseCloseBtn.addEventListener('click', closePurchaseModal);
-purchaseOverlay.addEventListener('click', (e)=>{ if(e.target === purchaseOverlay) closePurchaseModal(); });
+purchaseOverlay.addEventListener('click',(e)=>{if(e.target===purchaseOverlay)closePurchaseModal();});
 
-/* ---------- Tabbar clicks visual ---------- */
-document.querySelectorAll('.tabs .tab').forEach(tab=>{
-  tab.addEventListener('click', ()=>{
-    document.querySelectorAll('.tabs .tab').forEach(t=>{ t.classList.remove('active'); t.setAttribute('aria-selected','false'); });
-    tab.classList.add('active'); tab.setAttribute('aria-selected','true');
-  });
-});
+document.querySelectorAll('.tabs .tab').forEach(tab=>{ tab.addEventListener('click', ()=>{ document.querySelectorAll('.tabs .tab').forEach(t=>{ t.classList.remove('active'); t.setAttribute('aria-selected','false'); }); tab.classList.add('active'); tab.setAttribute('aria-selected','true'); }); });
 
-/* ---------- resize handler ---------- */
-let resizeTimer = null;
-window.addEventListener('resize', ()=>{
-  if(resizeTimer) clearTimeout(resizeTimer);
-  resizeTimer = setTimeout(()=>{}, 120);
-});
-
-/* init: show warnings if libs missing */
-if(typeof gsap === 'undefined') console.warn('GSAP не загружен — анимации скрыть/показ упрощены.');
+let resizeTimer=null; window.addEventListener('resize',()=>{ if(resizeTimer) clearTimeout(resizeTimer); resizeTimer=setTimeout(()=>{},120); });
+if(typeof gsap==='undefined') console.warn('GSAP не загружен — анимации скрыть/показ упрощены.');
 </script>
 </body>
 </html>
