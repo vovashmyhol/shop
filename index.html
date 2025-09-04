@@ -19,7 +19,7 @@
   --bg:#0f1116;
   --bg-soft:#151822;
   --card-bg:#1a1e2a;
-  --text:#e7ecf3;
+  --text:#ffffff;
   --muted:#c8cdd6;
   --accent-blue-start:#3abefc;
   --accent-blue-end:#6aa8ff;
@@ -71,13 +71,13 @@ body{
 /* --- Banner --- */
 .banner{
   margin:12px 14px;
-  padding: 10px 12px;
+  padding: 13px 12px;
   border-radius: 14px;
   background: linear-gradient(90deg, var(--accent-blue-start), var(--accent-blue-end));
   display:flex; align-items:center; justify-content:space-between;
   box-shadow: var(--shadow);
 }
-.banner .title{ font-weight:800; font-size:15px }
+.banner .title{ font-weight:800; font-size:15px; margin:0px 8px; }
 .banner .btn{
   background: #fff;
   color: #09b5ff;
@@ -87,6 +87,7 @@ body{
   text-decoration:none;
   font-size:13px;
   display:inline-flex; align-items:center; gap:8px;
+  margin:0px 7px;
 }
 
 /* --- Toggle --- */
@@ -159,23 +160,41 @@ body{
 }
 .card .footer .price {
   display:inline-flex; align-items:center; gap:8px;
-  background: linear-gradient(180deg, rgba(255,209,75,0.95), rgba(255,195,45,0.95));
-  padding:8px 12px; border-radius:12px;
-  color:#1f1f1f; font-weight:800; font-size:15px;
+  background: linear-gradient(180deg, rgba(255, 210, 75, 0.140), rgba(255, 195, 45, 0.140));
+  padding:6px 13px; border-radius:16px;
+  color:#51ff00d2; font-weight:700; font-size:15px;
   box-shadow: 0 6px 16px rgba(0,0,0,.22);
 }
 .price-icon { width:16px; height:16px; object-fit:contain; border-radius:3px; }
 
-.ribbon{
-  position:absolute;
-  top:12px;
-  right:-42px;
+.ribbon {
+  position: absolute;
+  top: 12px;
+  right: -25px;
+  width: 120px;
+  height: 24px;                /* фиксированная высота */
+  display: flex;
+  align-items: center;         /* вертикальное центрирование */
+  justify-content: center;     /* горизонтальное центрирование */
   transform: rotate(35deg);
-  color:white; font-weight:800; font-size:13px; letter-spacing:.3px;
-  padding: 8px 46px; box-shadow:0 8px 16px rgba(0,0,0,.25);
-  border-top-left-radius:6px; border-top-right-radius:6px;
-  pointer-events:none;
+  background-color: #ff4d4f;
+  color: #fff;
+  font-weight: 700;
+  font-size: 12px;
+  border-radius: 6px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.25);
+  pointer-events: none;
+  line-height: 1;
+  padding: 0 8px;              /* небольшой горизонтальный отступ */
 }
+.ribbon.sold {
+  background-color: #ff8a95;
+}
+
+
+
+
+
 .ribbon.sold { background: linear-gradient(180deg, #ff8a95, #e64655); }
 .ribbon.stock { background: linear-gradient(90deg,#66c2ff,#3aa6ff); }
 
@@ -233,8 +252,8 @@ body{
 .price-row{ display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
 .price-pill{
   display:inline-flex; align-items:center; gap:10px;
-  background: linear-gradient(180deg, rgba(255,209,75,0.98), rgba(255,195,45,0.98));
-  color:#111; padding:10px 14px; border-radius:12px; font-weight:900; font-size:16px; box-shadow: 0 8px 20px rgba(0,0,0,.35);
+  background: linear-gradient(180deg, rgba(255, 210, 75, 0.140), rgba(255, 195, 45, 0.140));
+  color:#51ff00d2; padding:10px 14px; border-radius:16px; font-weight:650; font-size:17px; box-shadow: 0 8px 20px rgba(0,0,0,.35);
 }
 .modal-actions{ display:flex; gap:12px; flex-direction:column; }
 .btn-ghost{
@@ -272,7 +291,7 @@ body{
 
     <!-- Banner -->
     <div class="banner" role="region" aria-label="banner">
-      <div class="title">Turbo Gifts here!</div>
+      <div class="title">Check our news!</div>
       <a id="bannerBtn" class="btn" href="https://example.com" target="_blank" rel="noopener noreferrer">Open Gifts</a>
     </div>
 
@@ -315,7 +334,7 @@ body{
   <nav class="tabbar" role="navigation" aria-label="Основная навигация">
     <div class="tabs" role="tablist">
       <div class="tab active" role="tab" aria-selected="true" id="tab1" title="Tab 1">
-        <img src="https://dummyimage.com/64x64/2b3345/ffffff&text=1" alt="tab1 icon">
+        <img src="stars-DBKMczxe.png" alt="tab1 icon">
       </div>
       <div class="tab" role="tab" aria-selected="false" id="tab2" title="Tab 2">
         <img src="https://dummyimage.com/64x64/2b3345/ffffff&text=2" alt="tab2 icon">
@@ -513,4 +532,6 @@ let resizeTimer=null; window.addEventListener('resize',()=>{ if(resizeTimer) cle
 if(typeof gsap==='undefined') console.warn('GSAP не загружен — анимации скрыть/показ упрощены.');
 </script>
 </body>
+</html>
+
 </html>
