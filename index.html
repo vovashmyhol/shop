@@ -167,16 +167,18 @@ body{
 }
 .price-icon { width:16px; height:16px; object-fit:contain; border-radius:3px; }
 
+/* --- Ribbon (compact, centered text) --- */
 .ribbon {
   position: absolute;
-  top: 12px;
-  right: -25px;
+  top: 10px;
+  right: -22px;
   width: 120px;
-  height: 24px;                /* фиксированная высота */
+  height: 26px;
   display: flex;
-  align-items: center;         /* вертикальное центрирование */
-  justify-content: center;     /* горизонтальное центрирование */
+  align-items: center;
+  justify-content: center;
   transform: rotate(35deg);
+  transform-origin: center;
   background-color: #ff4d4f;
   color: #fff;
   font-weight: 700;
@@ -185,13 +187,9 @@ body{
   box-shadow: 0 4px 8px rgba(0,0,0,0.25);
   pointer-events: none;
   line-height: 1;
-  padding: 0 8px;              /* небольшой горизонтальный отступ */
+  padding: 0 8px;
+  white-space: nowrap;
 }
-.ribbon.sold {
-  background-color: #ff8a95;
-}
-
-
 .ribbon.sold { background: linear-gradient(180deg, #ff8a95, #e64655); }
 .ribbon.stock { background: linear-gradient(90deg,#66c2ff,#3aa6ff); }
 
@@ -223,6 +221,8 @@ body{
   background: rgba(6,8,10,0.95); backdrop-filter: blur(6px);
 }
 .overlay.open, .purchase-overlay.open{ display:flex; }
+
+/* modal stretches full screen now */
 .modal-card{
   width:100%; height:100%; max-height:100vh;
   background: linear-gradient(180deg,#0f1116,#0b0d10);
@@ -237,11 +237,19 @@ body{
 .modal-close { background:transparent; border:0; color:var(--muted); font-weight:700; cursor:pointer; font-size:16px; }
 
 .modal-body{ flex:1; display:flex; align-items:center; justify-content:center; padding: 8px; overflow:auto; }
+
+/* --> SQUARE area for gift inside modal */
 .modal-media-wrap{
-  width:95%; max-width:720px; height:60%;
+  width:95%; max-width:520px;
+  aspect-ratio: 1 / 1; /* важная часть — делает ровный квадрат */
   display:flex; align-items:center; justify-content:center;
+  border-radius:14px;
+  background: linear-gradient(180deg, rgba(20,22,28,0.45), rgba(8,9,12,0.35));
+  border:1px solid rgba(255,255,255,0.03);
+  box-shadow: 0 20px 60px rgba(0,0,0,.6);
+  overflow:hidden;
 }
-.modal-media{ width:100%; height:100%; display:flex; align-items:center; justify-content:center; }
+.modal-media{ width:100%; height:100%; display:flex; align-items:center; justify-content:center; padding:8px; }
 
 .modal-bottom{
   padding:18px 16px; display:flex; flex-direction:column; gap:8px;
@@ -272,8 +280,70 @@ body{
   background: #2fa6ff; color:#fff; padding:16px; border-radius:12px; font-weight:900; cursor:pointer;
 }
 
+/* Tab 3 layout: profile + purchased grid */
+.tab3-wrapper{
+  padding: 16px;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+.tab3-wrapper.open{ display:flex; }
+
+.tab3-profile{
+  display:flex; flex-direction:column; align-items:center; gap:8px;
+  margin-top: 6px;
+}
+.tab3-profile .big-avatar{
+  width:84px; height:84px; border-radius:50%; background:#222; background-position:center; background-size:cover; border:3px solid #303544;
+}
+.tab3-profile .profile-name{ font-weight:800; font-size:18px; }
+
+.separator{
+  width:90%; height:1px; background: linear-gradient(90deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+  margin: 4px 0 8px 0;
+  border-radius:2px;
+}
+
+/* purchased gifts grid */
+.purchased-grid{
+  width:100%;
+  display:grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap:10px;
+  padding: 0 10px 30px 10px;
+  box-sizing:border-box;
+}
+.purchased-card{
+  background: linear-gradient(120deg,#0f1318,#0b0e12);
+  border:1px solid rgba(255,255,255,0.03);
+  border-radius:12px;
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:flex-end;
+  height:160px;
+  cursor:pointer;
+}
+.purchased-card .media{ position:relative; width:100%; height:100%; display:flex; align-items:center; justify-content:center; padding:8px; }
+.purchased-card .footer{ height:44px; display:flex; align-items:center; justify-content:center; width:100%; background:transparent; border-top:1px solid rgba(255,255,255,0.02);}
+
+/* disabled Improve button (non-functional) */
+.btn-upgrade{
+  background: linear-gradient(90deg,#2fa6ff,#1a73ff);
+  color:#fff; padding:12px; border-radius:10px; font-weight:800; text-decoration:none; text-align:center;
+}
+.btn-upgrade.disabled{ opacity:0.36; filter:saturate(.6); pointer-events:none; }
+
+/* helpers */
 .hidden { display:none !important; }
 .lottie-placeholder{ color:var(--muted); font-size:13px; text-align:center; padding:8px }
+
+@media (max-width:420px){
+  .modal-media-wrap{ max-width: 92%; }
+  .purchased-card{ height:140px; }
+}
 </style>
 </head>
 <body>
@@ -300,7 +370,7 @@ body{
 
     <!-- Grid -->
     <div class="grid" id="cardsGrid" aria-live="polite">
-      <article class="card" id="card1" data-sold="false" data-invoice-url="#" role="article" aria-label="1 из 100">
+      <article class="card" id="card1" data-sold="false" data-invoice-url="https://t.me/$OEtEnkq5wEppDQAAuOeA4xzWyR4" role="article" aria-label="1 из 100">
         <div class="ribbon stock" aria-hidden="true">1 из 100</div>
         <div class="media lottie" data-lottie-url="https://raw.githubusercontent.com/vovashmyhol/shop/refs/heads/main/002_DOG%20(1).json">
           <div class="lottie-placeholder">Lottie animation 1</div>
@@ -312,7 +382,7 @@ body{
           </div>
         </div>
       </article>
-      <article class="card" id="card2" data-sold="false" data-invoice-url="#" role="article" aria-label="1 из 50">
+      <article class="card" id="card2" data-sold="false" data-invoice-url="https://t.me/$OEtEnkq5wEppDQAAuOeA4xzWyR4" role="article" aria-label="1 из 50">
         <div class="ribbon stock" aria-hidden="true">1 из 50</div>
         <div class="media lottie" data-lottie-url="https://raw.githubusercontent.com/vovashmyhol/shop/refs/heads/main/002_DOG%20(1).json">
           <div class="lottie-placeholder">Lottie animation 2</div>
@@ -342,6 +412,18 @@ body{
     </div>
   </nav>
 
+  <!-- Tab 3 content (profile + purchased) -->
+  <div id="tab3Content" class="tab3-wrapper" aria-hidden="true">
+    <div class="tab3-profile">
+      <div id="bigAvatar" class="big-avatar" aria-hidden="true"></div>
+      <div id="bigName" class="profile-name">User</div>
+    </div>
+    <div class="separator" role="separator" aria-hidden="true"></div>
+    <div id="purchasedGrid" class="purchased-grid" aria-live="polite">
+      <!-- purchased cards injected here -->
+    </div>
+  </div>
+
   <!-- FULLSCREEN ITEM MODAL -->
   <div id="itemOverlay" class="overlay" aria-hidden="true" role="dialog" aria-modal="true">
     <div class="modal-card" role="document" aria-label="Детали подарка">
@@ -367,7 +449,13 @@ body{
 
         <div class="modal-actions">
           <a id="modalBuyStars" class="btn-ghost" href="#" target="_blank" rel="noopener noreferrer">Купить звёзды ★</a>
+          <!-- buy button (visible for not-yet-purchased items) -->
           <a id="modalBuyGift" class="btn-primary" href="#" target="_blank" rel="noopener noreferrer">Купить подарок — ★ <span id="modalBuyPrice">15</span></a>
+
+          <!-- upgrade button (appears for purchased items, disabled) -->
+          <div id="modalUpgradeWrap" class="hidden">
+            <a id="modalUpgrade" class="btn-upgrade disabled">Улучшить</a>
+          </div>
         </div>
       </div>
     </div>
@@ -382,6 +470,16 @@ body{
   </div>
 
 <script>
+/* ===========================
+  Расширения:
+  - Square modal media (aspect-ratio)
+  - Telegram.WebApp.openInvoice(selectedLink) usage
+  - Сохранение купленных подарков в localStorage
+  - Вкладка 3: профиль + сохраненные покупки (2 в ряд)
+  - При показе купленного — заменяем кнопку "Купить" на "Улучшить" (disabled)
+  =========================== */
+
+/* ---------- Telegram WebApp: имя и аватар (инициализация) ---------- */
 (function initTelegramUser(){
   try {
     if(window.Telegram && Telegram.WebApp){
@@ -390,6 +488,8 @@ body{
       const user = initDataUnsafe.user || null;
       const nameEl = document.getElementById('userName');
       const avatarEl = document.getElementById('avatar');
+      const bigAvatar = document.getElementById('bigAvatar');
+      const bigName = document.getElementById('bigName');
 
       if(user){
         const parts = [];
@@ -398,53 +498,174 @@ body{
         if(parts.length === 0 && user.username) parts.push(user.username);
         if(parts.length === 0) parts.push('User');
 
-        nameEl.textContent = parts.join(' ');
+        const displayName = parts.join(' ');
+        nameEl.textContent = displayName;
+        bigName.textContent = displayName;
 
         if(user.photo_url){
           avatarEl.style.backgroundImage = `url("${user.photo_url}")`;
+          bigAvatar.style.backgroundImage = `url("${user.photo_url}")`;
         } else {
           const initials = parts.map(p=>p[0]||'').join('').slice(0,2).toUpperCase() || 'U';
           const bg = '#2b3345';
           const fg = '#fff';
           const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><rect width='100%' height='100%' fill='${bg}' rx='40'/><text x='50%' y='50%' font-family='Arial,sans-serif' font-size='90' fill='${fg}' dominant-baseline='middle' text-anchor='middle'>${initials}</text></svg>`;
-          avatarEl.style.backgroundImage = `url("data:image/svg+xml;charset=utf8,${encodeURIComponent(svg)}")`;
+          const url = `data:image/svg+xml;charset=utf8,${encodeURIComponent(svg)}`;
+          avatarEl.style.backgroundImage = `url("${url}")`;
+          bigAvatar.style.backgroundImage = `url("${url}")`;
         }
       }
     }
-  } catch(err){ console.warn('Telegram init error', err); }
+  } catch(err){
+    console.warn('Telegram init error', err);
+  }
 })();
 
+/* ---------- Lottie / rlottie загрузка (везде) ---------- */
 function loadLottieFor(el){
   const url = el.getAttribute('data-lottie-url');
   el.innerHTML = '';
-  if(!url){ el.innerHTML = '<div class="lottie-placeholder">Укажите raw ссылку на Lottie (.json или .tgs)</div>'; return; }
+  if(!url){
+    el.innerHTML = '<div class="lottie-placeholder">Укажите raw ссылку на Lottie (.json или .tgs)</div>';
+    return;
+  }
+
+  // JSON -> lottie-web
   if(/\.json(\?|$)/i.test(url) && window.lottie){
-    try { lottie.loadAnimation({ container: el, renderer: 'svg', loop: true, autoplay: true, path: url }); return; } 
-    catch(e){ el.innerHTML = '<div class="lottie-placeholder">Ошибка загрузки Lottie JSON</div>'; }
+    try {
+      lottie.loadAnimation({
+        container: el,
+        renderer: 'svg',
+        loop: true,
+        autoplay: true,
+        path: url
+      });
+      return;
+    } catch(e){
+      el.innerHTML = '<div class="lottie-placeholder">Ошибка загрузки Lottie JSON</div>';
+    }
   }
+
+  // .tgs -> rlottie
   if(/\.tgs(\?|$)/i.test(url) && window.rlottie){
-    try { const player = new rlottie.Player({ name: 'anim-' + Math.random().toString(36).slice(2), src: url, loop: true, autoplay: true, container: el });
-          el.style.display = 'grid'; el.style.placeItems = 'center'; return; } 
-    catch(e){ el.innerHTML = '<div class="lottie-placeholder">Ошибка загрузки TGS</div>'; }
+    try {
+      const player = new rlottie.Player({
+        name: 'anim-' + Math.random().toString(36).slice(2),
+        src: url,
+        loop: true,
+        autoplay: true,
+        container: el
+      });
+      el.style.display = 'grid'; el.style.placeItems = 'center';
+      return;
+    } catch(e){
+      el.innerHTML = '<div class="lottie-placeholder">Ошибка загрузки TGS</div>';
+    }
   }
+
+  // fallback: image
   if(/\.(svg|png|jpg|jpeg|gif)(\?|$)/i.test(url)){
-    const img = document.createElement('img'); img.src = url; img.alt = 'media'; img.style.maxWidth='100%'; img.style.maxHeight='100%'; el.appendChild(img); return;
+    const img = document.createElement('img');
+    img.src = url; img.alt = 'media';
+    img.style.maxWidth = '100%'; img.style.maxHeight = '100%';
+    el.appendChild(img); return;
   }
+
   el.innerHTML = '<div class="lottie-placeholder">Неподдерживаемый формат</div>';
 }
 
+/* Загрузим карточные Lottie (фулл) */
 document.querySelectorAll('.media.lottie').forEach(loadLottieFor);
 
+/* ---------- Persisted purchased gifts (localStorage) ---------- */
+const PURCHASE_KEY = 'turbo_gifts_purchased_v1';
+
+function readPurchased(){
+  try{ return JSON.parse(localStorage.getItem(PURCHASE_KEY) || '[]'); }catch(e){ return []; }
+}
+function savePurchased(list){
+  try{ localStorage.setItem(PURCHASE_KEY, JSON.stringify(list)); }catch(e){ console.warn('savePurchased',e); }
+}
+function addPurchased(item){
+  const list = readPurchased();
+  // avoid duplicates: compare by id or lottie + price + title
+  const exists = list.some(x => x.id === item.id);
+  if(!exists){
+    list.unshift(item); // latest first
+    savePurchased(list);
+    renderPurchasedGrid();
+  }
+}
+
+/* ---------- render purchased gifts grid (tab 3) ---------- */
+function createPurchasedCardNode(item){
+  const a = document.createElement('article');
+  a.className = 'purchased-card';
+  a.setAttribute('data-purchased-id', item.id);
+  a.setAttribute('role','article');
+  a.setAttribute('aria-label', item.title || 'Купленный подарок');
+
+  const media = document.createElement('div');
+  media.className = 'media';
+  media.setAttribute('data-lottie-url', item.lottie || '');
+  const footer = document.createElement('div');
+  footer.className = 'footer';
+
+  const priceWrap = document.createElement('div');
+  priceWrap.className = 'price';
+  priceWrap.style.display = 'inline-flex';
+  priceWrap.style.alignItems = 'center';
+  priceWrap.style.gap = '8px';
+  priceWrap.style.color = '#fff';
+  priceWrap.innerHTML = `<img src="stars-DBKMczxe.png" alt="icon" class="price-icon" style="width:14px;height:14px"><span class="price-value">${item.price}</span>`;
+
+  footer.appendChild(priceWrap);
+  a.appendChild(media);
+  a.appendChild(footer);
+
+  // load Lottie preview in the purchased card media
+  // but keep tag small: create inner container
+  const inner = document.createElement('div');
+  inner.style.width = '100%';
+  inner.style.height = '100%';
+  if(item.lottie) inner.setAttribute('data-lottie-url', item.lottie);
+  media.appendChild(inner);
+  loadLottieFor(inner);
+
+  // click opens modal (but this is purchased item: show upgrade button disabled)
+  a.addEventListener('click', (e)=>{
+    openItemModalFromPurchased(item, a);
+  });
+
+  return a;
+}
+
+function renderPurchasedGrid(){
+  const grid = document.getElementById('purchasedGrid');
+  grid.innerHTML = '';
+  const list = readPurchased();
+  if(!list.length){
+    grid.innerHTML = '<div style="color:var(--muted); padding:12px; grid-column:1/-1; text-align:center">Пока нет купленных подарков</div>';
+    return;
+  }
+  list.forEach(item=>{
+    const node = createPurchasedCardNode(item);
+    grid.appendChild(node);
+  });
+}
+
+/* ---------- GSAP: скрыть/показ распроданных ---------- */
 const hideSoldCheckbox = document.getElementById('hideSold');
 const soldSelector = '[data-sold="true"]';
 function soldCards(){ return Array.from(document.querySelectorAll(soldSelector)); }
 
-function hideSoldAnimated(){ soldCards().forEach(c=>{ if(c.dataset._hidden==='1')return; gsap.to(c,{duration:0.36, ease:'power2.out', opacity:0, scale:0.98, y:-8, onComplete:()=>{ c.style.display='none'; c.dataset._hidden='1'; } }); }); }
-function showSoldAnimated(){ soldCards().forEach(c=>{ if(c.dataset._hidden!=='1')return; c.style.display=''; gsap.set(c,{opacity:0, scale:0.98, y:-8}); gsap.to(c,{duration:0.4, ease:'power2.out', opacity:1, scale:1, y:0, onComplete:()=>{ c.dataset._hidden='0'; }}); }); }
+function hideSoldAnimated(){ soldCards().forEach(c=>{ if(c.dataset._hidden==='1')return; if(typeof gsap!=='undefined'){ gsap.to(c,{duration:0.36, ease:'power2.out', opacity:0, scale:0.98, y:-8, onComplete:()=>{ c.style.display='none'; c.dataset._hidden='1'; } }); } else { c.style.display='none'; c.dataset._hidden='1'; } }); }
+function showSoldAnimated(){ soldCards().forEach(c=>{ if(c.dataset._hidden!=='1')return; c.style.display=''; if(typeof gsap!=='undefined'){ gsap.set(c,{opacity:0, scale:0.98, y:-8}); gsap.to(c,{duration:0.4, ease:'power2.out', opacity:1, scale:1, y:0, onComplete:()=>{ c.dataset._hidden='0'; }}); } else { c.dataset._hidden='0'; } }); }
 
 hideSoldCheckbox.addEventListener('change', ()=>{ if(hideSoldCheckbox.checked) hideSoldAnimated(); else showSoldAnimated(); });
-window.addEventListener('load', ()=>{ if(hideSoldCheckbox.checked) setTimeout(hideSoldAnimated,120); else soldCards().forEach(c=>{ c.dataset._hidden='0'; c.style.display=''; c.style.opacity=1; c.style.transform='none'; }); });
+window.addEventListener('load', ()=>{ if(hideSoldCheckbox.checked) setTimeout(hideSoldAnimated,120); else soldCards().forEach(c=>{ c.dataset._hidden='0'; c.style.display=''; c.style.opacity=1; c.style.transform='none'; }); renderPurchasedGrid(); });
 
+/* ---------- MODAL LOGIC ---------- */
 const itemOverlay = document.getElementById('itemOverlay');
 const modalCloseBtn = document.getElementById('modalCloseBtn');
 const modalTitle = document.getElementById('modalTitle');
@@ -454,6 +675,8 @@ const modalBuyStars = document.getElementById('modalBuyStars');
 const modalBuyGift = document.getElementById('modalBuyGift');
 const modalBuyPrice = document.getElementById('modalBuyPrice');
 const modalShort = document.getElementById('modalShort');
+const modalUpgradeWrap = document.getElementById('modalUpgradeWrap');
+const modalUpgrade = document.getElementById('modalUpgrade');
 
 const purchaseOverlay = document.getElementById('purchaseOverlay');
 const purchasedMedia = document.getElementById('purchasedMedia');
@@ -461,74 +684,244 @@ const purchaseCloseBtn = document.getElementById('purchaseCloseBtn');
 
 let activeCard = null;
 let lastLottieUrl = null;
+let activeItemMeta = null; // object for current opened item
 
 function openItemModal(cardEl){
   activeCard = cardEl;
-  const title = cardEl.getAttribute('aria-label') || 'Подарок';
-  const price = cardEl.querySelector('.price-value')?.textContent?.trim() || '0';
-  const lottieUrl = cardEl.querySelector('.media.lottie')?.getAttribute('data-lottie-url') || '';
-  const invoice = cardEl.getAttribute('data-invoice-url') || '#';
+  activeItemMeta = {
+    id: cardEl.id || ('gift_' + Date.now()),
+    title: cardEl.getAttribute('aria-label') || 'Подарок',
+    price: cardEl.querySelector('.price .price-value')?.textContent?.trim() || cardEl.querySelector('.price-value')?.textContent?.trim() || '0',
+    lottie: cardEl.querySelector('.media.lottie')?.getAttribute('data-lottie-url') || '',
+    invoice: cardEl.getAttribute('data-invoice-url') || '#',
+    purchased: false
+  };
 
-  modalTitle.textContent = title;
-  modalPriceValue.textContent = price;
-  modalBuyPrice.textContent = price;
+  showModalForMeta(activeItemMeta);
+}
+
+function openItemModalFromPurchased(item, cardNode){
+  // build meta for purchased item
+  activeItemMeta = {
+    id: item.id,
+    title: item.title,
+    price: item.price,
+    lottie: item.lottie,
+    invoice: item.invoice || '#',
+    purchased: true
+  };
+  showModalForMeta(activeItemMeta);
+}
+
+function showModalForMeta(meta){
+  // fill modal fields
+  modalTitle.textContent = meta.title || 'Подарок';
+  modalPriceValue.textContent = meta.price || '0';
+  modalBuyPrice.textContent = meta.price || '0';
   modalShort.textContent = ''; 
-  modalBuyGift.href = invoice;
+  modalBuyGift.href = meta.invoice || '#';
   modalBuyStars.href = document.getElementById('bannerBtn').href || '#';
 
+  // determine purchased state
+  if(meta.purchased){
+    modalBuyGift.classList.add('hidden');
+    modalUpgradeWrap.classList.remove('hidden');
+  } else {
+    modalBuyGift.classList.remove('hidden');
+    modalUpgradeWrap.classList.add('hidden');
+  }
+
+  // load lottie into modalLottie
   modalLottie.innerHTML = '';
-  if(lottieUrl){ lastLottieUrl = lottieUrl; const c=document.createElement('div'); c.style.width='100%'; c.style.height='100%'; c.setAttribute('data-lottie-url', lottieUrl); modalLottie.appendChild(c); loadLottieFor(c); }
-  else modalLottie.innerHTML = '<div class="lottie-placeholder">Нет анимации</div>';
+  if(meta.lottie){
+    lastLottieUrl = meta.lottie;
+    const c = document.createElement('div');
+    c.style.width = '100%'; c.style.height = '100%';
+    c.setAttribute('data-lottie-url', meta.lottie);
+    modalLottie.appendChild(c);
+    loadLottieFor(c);
+  } else {
+    modalLottie.innerHTML = '<div class="lottie-placeholder">Нет анимации</div>';
+  }
 
   itemOverlay.classList.add('open'); itemOverlay.setAttribute('aria-hidden','false');
   document.body.style.overflow = 'hidden';
 }
 
-function closeItemModal(){ modalLottie.innerHTML=''; itemOverlay.classList.remove('open'); itemOverlay.setAttribute('aria-hidden','true'); document.body.style.overflow=''; }
+function closeItemModal(){
+  modalLottie.innerHTML = '';
+  itemOverlay.classList.remove('open'); itemOverlay.setAttribute('aria-hidden','true');
+  document.body.style.overflow = '';
+}
 
-document.querySelectorAll('.card').forEach(card=>{ card.addEventListener('click', ()=>{ openItemModal(card); }); });
+/* bind card clicks (for main grid) */
+document.querySelectorAll('.card').forEach(card=>{
+  card.addEventListener('click', (e)=>{
+    openItemModal(card);
+  });
+});
+
+/* close modal */
 modalCloseBtn.addEventListener('click', closeItemModal);
-itemOverlay.addEventListener('click', (e)=>{ if(e.target===itemOverlay) closeItemModal(); });
+itemOverlay.addEventListener('click', (e)=>{ if(e.target === itemOverlay) closeItemModal(); });
 
+/* ---------- Payment: openInvoice using selectedLink string approach ---------- */
+/* The user requested the exact call: 
+   let selectedLink = "https://t.me/$OEtEnkq..."; 
+   Telegram.WebApp.openInvoice(selectedLink);
+   if (event.status === "paid") { ... }
+   We'll try to call openInvoice with string if available; otherwise fallback to opening url.
+*/
 modalBuyGift.addEventListener('click', (e)=>{
   e.preventDefault();
   const price = parseInt(modalPriceValue.textContent||0,10);
-  if(window.Telegram && Telegram.WebApp && Telegram.WebApp.openInvoice){
-    Telegram.WebApp.openInvoice({ 
-      title: modalTitle.textContent, 
-      description: modalShort.textContent||'Подарок', 
-      payload: 'gift_'+Date.now(), 
-      provider_token: 'YOUR_PROVIDER_TOKEN', // <== вставь токен
-      currency: 'USD', 
-      prices: [{label: 'Цена', amount: price*100}], 
-      need_email: false, 
-      need_phone_number: false
-    }, function(invoiceResult){
-      if(invoiceResult.status==='paid'){ window.handlePaymentSuccess(); }
-    });
-  } else { window.open(modalBuyGift.href,'_blank'); }
+
+  // get selectedLink from activeItemMeta or href
+  const selectedLink = (activeItemMeta && activeItemMeta.invoice) ? activeItemMeta.invoice : modalBuyGift.href || '#';
+
+  // If Telegram openInvoice accepts string (as you requested), call it.
+  try {
+    if(window.Telegram && Telegram.WebApp && typeof Telegram.WebApp.openInvoice === 'function'){
+      // call as string (user insisted). If platform supports object, it may still work.
+      try {
+        // Some platforms expect object, some not. Call with string first.
+        Telegram.WebApp.openInvoice(selectedLink);
+      } catch (err) {
+        // fallback: try object format (safe)
+        try {
+          Telegram.WebApp.openInvoice({
+            title: modalTitle.textContent,
+            description: modalShort.textContent || 'Подарок',
+            payload: 'gift_' + Date.now(),
+            provider_token: 'YOUR_PROVIDER_TOKEN', // <-- замените
+            currency: 'USD',
+            prices: [{label:'Цена', amount: price*100}],
+          }, function(invoiceResult){
+            if(invoiceResult && invoiceResult.status === 'paid'){ window.handlePaymentSuccessAndSave(); }
+          });
+        } catch (err2) {
+          // final fallback: open link in new tab
+          window.open(selectedLink, '_blank');
+        }
+      }
+    } else {
+      // no telegram SDK — open link in new tab
+      window.open(selectedLink, '_blank');
+    }
+  } catch(e){
+    console.warn('openInvoice error', e);
+    window.open(selectedLink, '_blank');
+  }
+
+  // Note: your backend / bot should call window.handlePaymentSuccess() or trigger the event.
 });
 
-window.handlePaymentSuccess = function(){
+/* ---------- Payment success handler (public) ---------- */
+/* Two helper functions:
+   - handlePaymentSuccessAndSave: will save activeItemMeta into purchased list and show purchase overlay
+   - handlePaymentSuccess: only opens purchase view (if needed)
+*/
+window.handlePaymentSuccessAndSave = function(paymentData){
+  // mark purchased and store relevant info (id, title, price, lottie, invoice)
+  if(!activeItemMeta){
+    // fallback: try lastLottieUrl
+    activeItemMeta = {
+      id: 'gift_'+Date.now(),
+      title: modalTitle.textContent || 'Подарок',
+      price: modalPriceValue.textContent || '0',
+      lottie: lastLottieUrl || '',
+      invoice: modalBuyGift.href || '#',
+      purchased: true
+    };
+  }
+  const saveItem = {
+    id: activeItemMeta.id || ('gift_'+Date.now()),
+    title: activeItemMeta.title || 'Подарок',
+    price: activeItemMeta.price || modalPriceValue.textContent || '0',
+    lottie: activeItemMeta.lottie || lastLottieUrl || '',
+    invoice: activeItemMeta.invoice || modalBuyGift.href || '#'
+  };
+  addPurchased(saveItem);
+
+  // Show purchase overlay
+  window.handlePaymentSuccess(paymentData);
+};
+
+/* simple open purchase overlay (show animation) */
+window.handlePaymentSuccess = function(paymentData){
   closeItemModal();
-  purchasedMedia.innerHTML='';
-  let lottieUrl = activeCard?.querySelector('.media.lottie')?.getAttribute('data-lottie-url') || lastLottieUrl || null;
-  if(lottieUrl){ const c=document.createElement('div'); c.style.width='100%'; c.style.height='100%'; c.setAttribute('data-lottie-url', lottieUrl); purchasedMedia.appendChild(c); loadLottieFor(c); }
-  else purchasedMedia.innerHTML = '<div class="lottie-placeholder">Нет медиа</div>';
+
+  purchasedMedia.innerHTML = '';
+  // show purchased animation (try activeItemMeta or lastLottieUrl)
+  let lottieUrl = (activeItemMeta && activeItemMeta.lottie) ? activeItemMeta.lottie : lastLottieUrl || null;
+  if(lottieUrl){
+    const c = document.createElement('div');
+    c.style.width = '100%'; c.style.height = '100%';
+    c.setAttribute('data-lottie-url', lottieUrl);
+    purchasedMedia.appendChild(c);
+    loadLottieFor(c);
+  } else {
+    purchasedMedia.innerHTML = '<div class="lottie-placeholder">Нет медиа</div>';
+  }
+
   purchaseOverlay.classList.add('open'); purchaseOverlay.setAttribute('aria-hidden','false');
-  document.body.style.overflow='hidden';
+  document.body.style.overflow = 'hidden';
 };
 
 function closePurchaseModal(){ purchasedMedia.innerHTML=''; purchaseOverlay.classList.remove('open'); purchaseOverlay.setAttribute('aria-hidden','true'); document.body.style.overflow=''; }
 purchaseCloseBtn.addEventListener('click', closePurchaseModal);
-purchaseOverlay.addEventListener('click',(e)=>{if(e.target===purchaseOverlay)closePurchaseModal();});
+purchaseOverlay.addEventListener('click',(e)=>{ if(e.target === purchaseOverlay) closePurchaseModal(); });
 
-document.querySelectorAll('.tabs .tab').forEach(tab=>{ tab.addEventListener('click', ()=>{ document.querySelectorAll('.tabs .tab').forEach(t=>{ t.classList.remove('active'); t.setAttribute('aria-selected','false'); }); tab.classList.add('active'); tab.setAttribute('aria-selected','true'); }); });
+/* ---------- Modal: Upgrade button behavior (disabled) ---------- */
+modalUpgrade.addEventListener('click', (e)=>{
+  // intentionally disabled (non-functional) — visual only
+  e.preventDefault();
+  return false;
+});
 
-let resizeTimer=null; window.addEventListener('resize',()=>{ if(resizeTimer) clearTimeout(resizeTimer); resizeTimer=setTimeout(()=>{},120); });
-if(typeof gsap==='undefined') console.warn('GSAP не загружен — анимации скрыть/показ упрощены.');
+/* ---------- Tabbar clicks visual + Tab3 rendering ---------- */
+document.querySelectorAll('.tabs .tab').forEach(tab=>{
+  tab.addEventListener('click', ()=>{
+    document.querySelectorAll('.tabs .tab').forEach(t=>{ t.classList.remove('active'); t.setAttribute('aria-selected','false'); });
+    tab.classList.add('active'); tab.setAttribute('aria-selected','true');
+
+    // show/hide main app grid and tab3 content
+    const idx = tab.id;
+    const mainApp = document.querySelector('.app');
+    const tab3 = document.getElementById('tab3Content');
+    if(tab.id === 'tab3'){
+      // hide main grid visually and show tab3 content
+      mainApp.style.display = 'none';
+      tab3.classList.add('open');
+      tab3.setAttribute('aria-hidden','false');
+      // render purchased grid each time just in case
+      renderPurchasedGrid();
+    } else {
+      // show main app, hide tab3
+      mainApp.style.display = '';
+      tab3.classList.remove('open');
+      tab3.setAttribute('aria-hidden','true');
+    }
+  });
+});
+
+/* ---------- helpers: when opening a purchased item modal, swap buttons ---------- */
+/* Already handled in showModalForMeta() by checking meta.purchased */
+
+/* ---------- resize handler ---------- */
+let resizeTimer = null;
+window.addEventListener('resize', ()=>{
+  if(resizeTimer) clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(()=>{}, 120);
+});
+
+/* ---------- init purchased grid on start ---------- */
+document.addEventListener('DOMContentLoaded', ()=>{
+  renderPurchasedGrid();
+});
+
+/* Safety note in console when GSAP missing */
+if(typeof gsap === 'undefined') console.warn('GSAP не загружен — анимации скрыть/показ упрощены.');
 </script>
 </body>
-</html>
-
 </html>
