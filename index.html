@@ -280,6 +280,59 @@ body{
   background: #2fa6ff; color:#fff; padding:16px; border-radius:12px; font-weight:900; cursor:pointer;
 }
 
+/* --- SUCCESS FULLSCREEN (added) --- */
+.success-overlay{
+  position: fixed; inset:0; z-index:3000; display:none;
+  align-items: center; justify-content: center;
+  background: rgba(8,10,12,0.96);
+  backdrop-filter: blur(6px);
+}
+.success-overlay.open{ display:flex; }
+
+/* success card centers animation and text, button at bottom */
+.success-card{
+  width:100%; max-width:720px; height:100%; max-height:100vh;
+  display:flex; flex-direction:column; align-items:center; justify-content:flex-start;
+  padding:24px; box-sizing:border-box;
+}
+.success-inner{
+  margin-top:36px;
+  width:min(520px,95%);
+  background: linear-gradient(180deg, rgba(20,22,28,0.55), rgba(10,11,13,0.35));
+  border-radius:16px;
+  padding:20px;
+  display:flex; flex-direction:column; align-items:center; gap:14px;
+  box-shadow: 0 30px 80px rgba(0,0,0,0.6);
+}
+.success-media{
+  width:70%; max-width:420px;
+  aspect-ratio: 1 / 1;
+  display:flex; align-items:center; justify-content:center;
+  border-radius:12px;
+  background: linear-gradient(180deg, rgba(5,7,9,0.2), rgba(8,9,10,0.12));
+  border:1px solid rgba(255,255,255,0.03);
+  overflow:hidden;
+}
+.success-title{ font-size:22px; font-weight:900; margin-top:6px; text-align:center; }
+.success-sub{ color:var(--muted); font-size:13px; text-align:center; margin-bottom:6px; }
+
+.success-close-full{
+  position: absolute;
+  bottom: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - 36px);
+  max-width:720px;
+  background: linear-gradient(90deg,#2fa6ff,#1a73ff);
+  color:#fff;
+  padding:16px;
+  border-radius:12px;
+  font-weight:900;
+  text-align:center;
+  cursor:pointer;
+  box-shadow: 0 12px 30px rgba(20,80,160,0.18);
+}
+
 /* Tab 3 layout: profile + purchased grid */
 .tab3-wrapper{
   padding: 16px;
@@ -343,6 +396,7 @@ body{
 @media (max-width:420px){
   .modal-media-wrap{ max-width: 92%; }
   .purchased-card{ height:140px; }
+  .success-media{ width:88%; }
 }
 </style>
 </head>
@@ -461,11 +515,23 @@ body{
     </div>
   </div>
 
-  <!-- PURCHASE FULLSCREEN -->
+  <!-- PURCHASE FULLSCREEN (kept for compatibility) -->
   <div id="purchaseOverlay" class="purchase-overlay" aria-hidden="true" role="dialog" aria-modal="true">
     <div class="purchase-card" role="document" aria-label="Куплено">
       <div id="purchasedMedia" class="purchase-media"></div>
       <div id="purchaseCloseBtn" class="purchase-close" role="button" tabindex="0">Закрыть</div>
+    </div>
+  </div>
+
+  <!-- SUCCESS FULLSCREEN (new) -->
+  <div id="successOverlay" class="success-overlay" aria-hidden="true" role="dialog" aria-modal="true">
+    <div class="success-card" role="document" aria-label="Подарок куплен">
+      <div class="success-inner" role="presentation">
+        <div id="successMedia" class="success-media" aria-hidden="true"></div>
+        <div class="success-title">Подарок куплен!</div>
+        <div class="success-sub">Ваш подарок находится в профиле</div>
+      </div>
+      <div id="successCloseBtn" class="success-close-full" role="button" tabindex="0">Закрыть</div>
     </div>
   </div>
 
@@ -476,7 +542,8 @@ body{
   - Telegram.WebApp.openInvoice(selectedLink) usage
   - Сохранение купленных подарков в localStorage
   - Вкладка 3: профиль + сохраненные покупки (2 в ряд)
-  - При показе купленного — заменяем кнопку "Купить" на "Улучшить" (disabled)
+  - После оплаты: показываем SUCCESS modal (анимация + заголовок + большая синяя кнопка)
+  - При закрытии SUCCESS modal: добавляем подарок в инвентарь и рендерим вкладку 3
   =========================== */
 
 /* ---------- Telegram WebApp: имя и аватар (инициализация) ---------- */
@@ -588,7 +655,7 @@ function savePurchased(list){
 }
 function addPurchased(item){
   const list = readPurchased();
-  // avoid duplicates: compare by id or lottie + price + title
+  // avoid duplicates: compare by id
   const exists = list.some(x => x.id === item.id);
   if(!exists){
     list.unshift(item); // latest first
@@ -624,7 +691,6 @@ function createPurchasedCardNode(item){
   a.appendChild(footer);
 
   // load Lottie preview in the purchased card media
-  // but keep tag small: create inner container
   const inner = document.createElement('div');
   inner.style.width = '100%';
   inner.style.height = '100%';
@@ -681,6 +747,10 @@ const modalUpgrade = document.getElementById('modalUpgrade');
 const purchaseOverlay = document.getElementById('purchaseOverlay');
 const purchasedMedia = document.getElementById('purchasedMedia');
 const purchaseCloseBtn = document.getElementById('purchaseCloseBtn');
+
+const successOverlay = document.getElementById('successOverlay');
+const successMedia = document.getElementById('successMedia');
+const successCloseBtn = document.getElementById('successCloseBtn');
 
 let activeCard = null;
 let lastLottieUrl = null;
@@ -770,7 +840,6 @@ itemOverlay.addEventListener('click', (e)=>{ if(e.target === itemOverlay) closeI
    let selectedLink = "https://t.me/$OEtEnkq..."; 
    Telegram.WebApp.openInvoice(selectedLink);
    if (event.status === "paid") { ... }
-   We'll try to call openInvoice with string if available; otherwise fallback to opening url.
 */
 modalBuyGift.addEventListener('click', (e)=>{
   e.preventDefault();
@@ -797,7 +866,10 @@ modalBuyGift.addEventListener('click', (e)=>{
             currency: 'USD',
             prices: [{label:'Цена', amount: price*100}],
           }, function(invoiceResult){
-            if(invoiceResult && invoiceResult.status === 'paid'){ window.handlePaymentSuccessAndSave(); }
+            if(invoiceResult && invoiceResult.status === 'paid'){ 
+              // старый коллбек — сохраняем и показываем success
+              window.handlePaymentSuccessAndSave && window.handlePaymentSuccessAndSave(invoiceResult);
+            }
           });
         } catch (err2) {
           // final fallback: open link in new tab
@@ -816,24 +888,61 @@ modalBuyGift.addEventListener('click', (e)=>{
   // Note: your backend / bot should call window.handlePaymentSuccess() or trigger the event.
 });
 
-/* ---------- Payment success handler (public) ---------- */
-/* Two helper functions:
-   - handlePaymentSuccessAndSave: will save activeItemMeta into purchased list and show purchase overlay
-   - handlePaymentSuccess: only opens purchase view (if needed)
-*/
-window.handlePaymentSuccessAndSave = function(paymentData){
-  // mark purchased and store relevant info (id, title, price, lottie, invoice)
-  if(!activeItemMeta){
-    // fallback: try lastLottieUrl
-    activeItemMeta = {
+/* ---------- Success modal behavior (new) ---------- */
+/**
+ * showSuccessOverlay(meta)
+ *   - shows modal with animation and texts
+ *   - doesn't immediately add to inventory
+ *   - waiting user to press "Закрыть", then adds to inventory
+ */
+function showSuccessOverlay(meta){
+  // ensure meta exists
+  if(!meta){
+    meta = activeItemMeta || {
       id: 'gift_'+Date.now(),
       title: modalTitle.textContent || 'Подарок',
       price: modalPriceValue.textContent || '0',
       lottie: lastLottieUrl || '',
-      invoice: modalBuyGift.href || '#',
-      purchased: true
+      invoice: modalBuyGift.href || '#'
+    };
+  } else {
+    activeItemMeta = meta;
+  }
+
+  // clear any previous animation
+  successMedia.innerHTML = '';
+
+  // load media
+  if(meta.lottie){
+    const c = document.createElement('div');
+    c.style.width = '100%'; c.style.height = '100%';
+    c.setAttribute('data-lottie-url', meta.lottie);
+    successMedia.appendChild(c);
+    loadLottieFor(c);
+  } else {
+    successMedia.innerHTML = '<div class="lottie-placeholder">Нет медиа</div>';
+  }
+
+  // show overlay
+  successOverlay.classList.add('open');
+  successOverlay.setAttribute('aria-hidden','false');
+  document.body.style.overflow = 'hidden';
+}
+
+/* close success overlay: add to inventory then close */
+function closeSuccessOverlayAndSave(){
+  // ensure activeItemMeta exists
+  if(!activeItemMeta){
+    activeItemMeta = {
+      id: 'gift_' + Date.now(),
+      title: modalTitle.textContent || 'Подарок',
+      price: modalPriceValue.textContent || '0',
+      lottie: lastLottieUrl || '',
+      invoice: modalBuyGift.href || '#'
     };
   }
+
+  // save to purchased list
   const saveItem = {
     id: activeItemMeta.id || ('gift_'+Date.now()),
     title: activeItemMeta.title || 'Подарок',
@@ -843,11 +952,47 @@ window.handlePaymentSuccessAndSave = function(paymentData){
   };
   addPurchased(saveItem);
 
-  // Show purchase overlay
-  window.handlePaymentSuccess(paymentData);
+  // close overlay
+  successMedia.innerHTML = '';
+  successOverlay.classList.remove('open');
+  successOverlay.setAttribute('aria-hidden','true');
+  document.body.style.overflow = '';
+
+  // ensure purchased grid updates
+  renderPurchasedGrid();
+}
+
+/* bind success close */
+successCloseBtn.addEventListener('click', ()=>{
+  closeSuccessOverlayAndSave();
+});
+successOverlay.addEventListener('click', (e)=>{ if(e.target === successOverlay) closeSuccessOverlayAndSave(); });
+
+/* ---------- Payment success handler (public) ---------- */
+/* Two helper functions:
+   - handlePaymentSuccessAndSave: will save activeItemMeta into purchased list and show purchase overlay [kept for backward compatibility]
+   - handlePaymentSuccess: opens purchase view (kept)
+   - New: when invoiceClosed event comes from Telegram we show success overlay (then user closes to save)
+*/
+window.handlePaymentSuccessAndSave = function(paymentData){
+  // If called from bot/backend, we want to show success overlay and then save when user closes
+  // Build activeItemMeta if missing
+  if(!activeItemMeta){
+    activeItemMeta = {
+      id: 'gift_'+Date.now(),
+      title: (paymentData && paymentData.title) ? paymentData.title : (modalTitle.textContent || 'Подарок'),
+      price: (paymentData && paymentData.price) ? paymentData.price : (modalPriceValue.textContent || '0'),
+      lottie: lastLottieUrl || '',
+      invoice: modalBuyGift.href || '#',
+      purchased: true
+    };
+  }
+
+  // Show success overlay (user will close to save)
+  showSuccessOverlay(activeItemMeta);
 };
 
-/* simple open purchase overlay (show animation) */
+/* simple open purchase overlay (show animation) - kept for compatibility */
 window.handlePaymentSuccess = function(paymentData){
   closeItemModal();
 
@@ -868,6 +1013,7 @@ window.handlePaymentSuccess = function(paymentData){
   document.body.style.overflow = 'hidden';
 };
 
+/* old close purchase modal */
 function closePurchaseModal(){ purchasedMedia.innerHTML=''; purchaseOverlay.classList.remove('open'); purchaseOverlay.setAttribute('aria-hidden','true'); document.body.style.overflow=''; }
 purchaseCloseBtn.addEventListener('click', closePurchaseModal);
 purchaseOverlay.addEventListener('click',(e)=>{ if(e.target === purchaseOverlay) closePurchaseModal(); });
@@ -886,7 +1032,6 @@ document.querySelectorAll('.tabs .tab').forEach(tab=>{
     tab.classList.add('active'); tab.setAttribute('aria-selected','true');
 
     // show/hide main app grid and tab3 content
-    const idx = tab.id;
     const mainApp = document.querySelector('.app');
     const tab3 = document.getElementById('tab3Content');
     if(tab.id === 'tab3'){
@@ -904,6 +1049,38 @@ document.querySelectorAll('.tabs .tab').forEach(tab=>{
     }
   });
 });
+
+/* ---------- Telegram invoiceClosed event handler (if supported) ---------- */
+(function attachInvoiceClosed(){
+  try {
+    if(window.Telegram && Telegram.WebApp && typeof Telegram.WebApp.onEvent === 'function'){
+      // listen to invoice closed events
+      Telegram.WebApp.onEvent("invoiceClosed", function(event) {
+        try {
+          if(event && event.status === "paid"){
+            // show success overlay and keep activeItemMeta (if set) — user will close to save
+            showSuccessOverlay(activeItemMeta);
+          } else {
+            console.log('Invoice closed with status', event && event.status);
+          }
+        } catch(err){
+          console.warn('invoiceClosed handler error', err);
+        }
+      });
+    } else {
+      // fallback: sometimes WebApp exposes on event differently
+      if(window.Telegram && Telegram.WebApp && typeof Telegram.WebApp.on === 'function'){
+        Telegram.WebApp.on('invoiceClosed', function(event){
+          if(event && event.status === "paid"){
+            showSuccessOverlay(activeItemMeta);
+          }
+        });
+      }
+    }
+  } catch(err){
+    console.warn('attachInvoiceClosed error', err);
+  }
+})();
 
 /* ---------- helpers: when opening a purchased item modal, swap buttons ---------- */
 /* Already handled in showModalForMeta() by checking meta.purchased */
